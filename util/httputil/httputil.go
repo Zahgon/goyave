@@ -2,9 +2,6 @@ package httputil
 
 import (
 	"regexp"
-	"sort"
-	"strconv"
-	"strings"
 )
 
 // HeaderValue represent a value and its quality value (priority)
@@ -31,49 +28,8 @@ var qualityValueRegex = regexp.MustCompile(`^q=([01]\.[0-9]{1,3})$`)
 // returns
 //
 //	[{text/html 1} {*/* 0.7} {text/* 0.5}]
-func ParseMultiValuesHeader(header string) []HeaderValue {
-	count := strings.Count(header, ",")
-	values := make([]HeaderValue, 0, count+1)
+func ParseMultiValuesHeader(header string) []HeaderValue { _ = "STUB: not implemented"; return nil }
 
-	h := strings.TrimSpace(header)
-	if h == "" {
-		return values
-	}
-	for {
-		comma := strings.Index(h, ",")
-		if comma == -1 {
-			comma = len(h)
-		}
-		v := h[:comma]
-		val := HeaderValue{}
-		if before, after, ok := strings.Cut(v, ";"); ok {
-			// Parse priority
-			q := after
+// Parse priority
 
-			sub := qualityValueRegex.FindStringSubmatch(q)
-			priority := 0.0
-			if len(sub) > 1 {
-				if p, err := strconv.ParseFloat(sub[1], 64); err == nil {
-					priority = p
-				}
-			}
-			// Priority set to 0 if the quality value cannot be parsed
-			val.Priority = priority
-
-			val.Value = strings.TrimSpace(before)
-		} else {
-			val.Value = strings.TrimSpace(v)
-			val.Priority = 1
-		}
-
-		values = append(values, val)
-		if comma == len(h) {
-			break
-		}
-		h = h[comma+1:]
-	}
-
-	sort.Sort(byPriority(values))
-
-	return values
-}
+// Priority set to 0 if the quality value cannot be parsed

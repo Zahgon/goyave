@@ -1,16 +1,8 @@
 package fsutil
 
 import (
-	"bytes"
 	"io"
 	"io/fs"
-	"mime"
-	"net/http"
-	"strconv"
-	"strings"
-	"time"
-
-	"goyave.dev/goyave/v5/util/errors"
 )
 
 var contentTypeByExtension = map[string]string{
@@ -100,70 +92,20 @@ var contentTypeByExtension = map[string]string{
 // Passing an extension that is already registered overrides the previous value.
 //
 // This function is not safe for concurrent use.
-func AddExtensionType(ext, mimeType string) error {
-	if !strings.HasPrefix(ext, ".") {
-		return errors.Errorf("fsutil: extension %q missing leading dot", ext)
-	}
-	_, params, err := mime.ParseMediaType(mimeType)
-	if err != nil {
-		return errors.New(err)
-	}
-	if len(params) > 0 {
-		return errors.Errorf("fsutil: MIME type %q contains a parameter", mimeType)
-	}
-	contentTypeByExtension[ext] = mimeType
-	return nil
-}
+func AddExtensionType(ext, mimeType string) error { _ = "STUB: not implemented"; return nil }
 
 // GetFileExtension returns the last part of a file name, without the leading dot.
 // If the file doesn't have an extension, returns an empty string.
 // For files with multiple extensions like `.tar.gz`, only `gz` is returned.
-func GetFileExtension(filename string) string {
-	index := strings.LastIndex(filename, ".")
-	if index == -1 {
-		return ""
-	}
-	return filename[index+1:]
-}
+func GetFileExtension(filename string) string { _ = "STUB: not implemented"; return "" }
 
 // GetMIMEType get the mime type and size of the given file.
 // This function opens the file, stats it and calls `fsutil.DetectContentType`.
 // If the file is empty (size of 0), the content-type will be detected using `fsutil.DetectContentTypeByExtension`.
 // If a specific MIME type cannot be determined, returns "application/octet-stream" as a fallback.
 func GetMIMEType(filesystem fs.FS, file string) (contentType string, size int64, err error) {
-	var f fs.File
-	f, err = filesystem.Open(file)
-	if err != nil {
-		err = errors.New(err)
-		return
-	}
-	defer func() {
-		errClose := f.Close()
-		if err == nil && errClose != nil {
-			err = errors.New(errClose)
-		}
-	}()
-
-	var stat fs.FileInfo
-	stat, err = f.Stat()
-	if err != nil {
-		err = errors.New(err)
-		return
-	}
-
-	size = stat.Size()
-
-	if size == 0 {
-		contentType = DetectContentTypeByExtension(file)
-		return
-	}
-
-	contentType, err = DetectContentType(f, file)
-	if err != nil {
-		err = errors.New(err)
-	}
-
-	return
+	_ = "STUB: not implemented"
+	return "", 0, nil
 }
 
 // DetectContentType by sniffing the first 512 bytes of the given reader using `http.DetectContentType`.
@@ -179,74 +121,20 @@ func GetMIMEType(filesystem fs.FS, file string) (contentType string, size int64,
 //
 // If the given reader implements `io.Seeker`, the reader's offset is reset to the start.
 func DetectContentType(r io.Reader, fileName string) (string, error) {
-	buffer := make([]byte, 512)
-	_, err := r.Read(buffer)
-	if err != nil {
-		return "", errors.New(err)
-	}
-	if seeker, ok := r.(io.Seeker); ok {
-		_, err = seeker.Seek(0, io.SeekStart)
-		if err != nil {
-			return "", errors.New(err)
-		}
-	}
-
-	contentType := http.DetectContentType(buffer)
-	if strings.HasPrefix(contentType, "application/octet-stream") || strings.HasPrefix(contentType, "text/plain") {
-		contentType = detectContentTypeByExtension(fileName, contentType)
-	} else if (strings.HasPrefix(contentType, "text/xml") || strings.HasPrefix(contentType, "application/xml")) && hasSVGSignature(buffer) {
-		contentType = "image/svg+xml"
-	}
-	return contentType, nil
+	_ = "STUB: not implemented"
+	return "", nil
 }
 
-func hasSVGSignature(buffer []byte) bool {
-	start := bytes.IndexRune(buffer, '<')
-	if start == -1 {
-		return false
-	}
+func hasSVGSignature(buffer []byte) bool { _ = "STUB: not implemented"; return false }
 
-	content := strings.TrimSpace(strings.ToLower(string(buffer[start:])))
-	// Skip optional XML tag and possible comments
-	for {
-		if strings.HasPrefix(content, "<?xml") {
-			end := strings.Index(content, "?>")
-			if end == -1 {
-				break
-			}
-			content = strings.TrimSpace(content[end+2:])
-			continue
-		}
-		if strings.HasPrefix(content, "<!--") {
-			end := strings.Index(content, "-->")
-			if end == -1 {
-				break
-			}
-			content = strings.TrimSpace(content[end+3:])
-			continue
-		}
-		break
-	}
-
-	return strings.HasPrefix(content, "<svg")
-}
+// Skip optional XML tag and possible comments
 
 func detectContentTypeByExtension(fileName, contentType string) string {
-	if fileName == "" {
-		return contentType
-	}
-	for ext, t := range contentTypeByExtension {
-		if strings.HasSuffix(fileName, ext) {
-			tmp := t
-			if i := strings.Index(contentType, ";"); i != -1 {
-				tmp = t + contentType[i:] // Keep the "charset" arguments
-			}
-			contentType = tmp
-			break
-		}
-	}
-	return contentType
+	_ = "STUB: not implemented"
+	return ""
 }
+
+// Keep the "charset" arguments
 
 // DetectContentTypeByExtension returns a MIME type associated with the extension (suffix) of the given file name.
 // Note that this function should be used as a fallback if sniffing using `fsutil.DetectContentType`
@@ -256,40 +144,16 @@ func detectContentTypeByExtension(fileName, contentType string) string {
 //
 // The local database covers the most common MIME types.
 // If the extension is not known to the `fsutil` package, returns `"application/octet-stream"`.
-func DetectContentTypeByExtension(fileName string) string {
-	return detectContentTypeByExtension(fileName, "application/octet-stream")
-}
+func DetectContentTypeByExtension(fileName string) string { _ = "STUB: not implemented"; return "" }
 
 // FileExists returns true if the file at the given path exists and is readable.
 // Returns false if the given file is a directory.
-func FileExists(fs fs.StatFS, file string) bool {
-	if stats, err := fs.Stat(file); err == nil {
-		return !stats.IsDir()
-	}
-	return false
-}
+func FileExists(fs fs.StatFS, file string) bool { _ = "STUB: not implemented"; return false }
 
 // IsDirectory returns true if the file at the given path exists, is a directory and is readable.
-func IsDirectory(fs fs.StatFS, path string) bool {
-	if stats, err := fs.Stat(path); err == nil {
-		return stats.IsDir()
-	}
-	return false
-}
+func IsDirectory(fs fs.StatFS, path string) bool { _ = "STUB: not implemented"; return false }
 
-func timestampFileName(name string) string {
-	var prefix string
-	var extension string
-	index := strings.LastIndex(name, ".")
-	if index == -1 {
-		prefix = name
-		extension = ""
-	} else {
-		prefix = name[:index]
-		extension = name[index:]
-	}
-	return prefix + "-" + strconv.FormatInt(time.Now().UnixNano()/int64(time.Microsecond), 10) + extension
-}
+func timestampFileName(name string) string { _ = "STUB: not implemented"; return "" }
 
 // An FS provides access to a hierarchical file system
 // and implements `io/fs`'s `FS`, `ReadDirFS` and `StatFS` interfaces.
@@ -355,11 +219,7 @@ type Embed struct {
 }
 
 // NewEmbed returns a new Embed with the given FS.
-func NewEmbed(fs fs.ReadDirFS) Embed {
-	return Embed{
-		FS: fs,
-	}
-}
+func NewEmbed(fs fs.ReadDirFS) Embed { _ = "STUB: not implemented"; return *new(Embed) }
 
 // Open opens the named file.
 //
@@ -371,50 +231,23 @@ func NewEmbed(fs fs.ReadDirFS) Embed {
 // ValidPath(name), returning a *PathError with Err set to
 // ErrInvalid or ErrNotExist.
 func (e Embed) Open(name string) (fs.File, error) {
-	f, err := e.FS.Open(name)
-	return f, errors.NewSkip(err, 3)
+	_ = "STUB: not implemented"
+	return *new(fs.File), nil
 }
 
 // ReadDir reads the named directory
 // and returns a list of directory entries sorted by filename.
 func (e Embed) ReadDir(name string) ([]fs.DirEntry, error) {
-	entries, err := e.FS.ReadDir(name)
-	return entries, errors.NewSkip(err, 3)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // Stat returns a FileInfo describing the file.
 func (e Embed) Stat(name string) (fileinfo fs.FileInfo, err error) {
-	if statsFS, ok := e.FS.(fs.StatFS); ok {
-		return statsFS.Stat(name)
-	}
-	f, err := e.FS.Open(name)
-	if err != nil {
-		return nil, errors.New(err)
-	}
-	defer func() {
-		e := f.Close()
-		if err == nil && e != nil {
-			err = errors.New(&fs.PathError{Op: "close", Path: name, Err: e})
-		}
-	}()
-
-	fileinfo, err = f.Stat()
-	if err != nil {
-		err = errors.New(err)
-	}
-	return
+	_ = "STUB: not implemented"
+	return *new(fs.FileInfo), nil
 }
 
 // Sub returns an Embed FS corresponding to the subtree rooted at dir.
 // Returns and error if the underlying sub FS doesn't implement `fs.ReadDirFS`.
-func (e Embed) Sub(dir string) (Embed, error) {
-	sub, err := fs.Sub(e.FS, dir)
-	if err != nil {
-		return Embed{}, errors.NewSkip(err, 3)
-	}
-	subFS, ok := sub.(fs.ReadDirFS)
-	if !ok {
-		return Embed{}, errors.NewSkip("fsutil.Embed: cannot Sub, underlying sub FS doesn't implement fsutil.FS", 3)
-	}
-	return Embed{FS: subFS}, nil
-}
+func (e Embed) Sub(dir string) (Embed, error) { _ = "STUB: not implemented"; return *new(Embed), nil }

@@ -1,23 +1,11 @@
 package httputil
 
-import "strings"
-
 type byPriority []HeaderValue
 
-func (s byPriority) Len() int {
-	return len(s)
-}
-func (s byPriority) Swap(i, j int) {
-	s[i], s[j] = s[j], s[i]
-}
-func (s byPriority) Less(i, j int) bool {
-	if s[j].Priority == s[i].Priority {
-		return specificity(s[j]) < specificity(s[i])
-	}
+func (s byPriority) Len() int { _ = "STUB: not implemented"; return 0 }
 
-	return s[j].Priority < s[i].Priority
-}
+func (s byPriority) Swap(i, j int) { _ = "STUB: not implemented"; return }
 
-func specificity(value HeaderValue) int {
-	return strings.Count(value.Value, "-") + strings.Count(value.Value, "/") - strings.Count(value.Value, "*")
-}
+func (s byPriority) Less(i, j int) bool { _ = "STUB: not implemented"; return false }
+
+func specificity(value HeaderValue) int { _ = "STUB: not implemented"; return 0 }

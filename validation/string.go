@@ -1,30 +1,27 @@
 package validation
 
-import (
-	"strings"
-
-	"github.com/samber/lo"
-)
-
 // StringValidator the field under validation must be a string.
 type StringValidator struct{ BaseValidator }
 
 // Validate checks the field under validation satisfies this validator's criteria.
-func (v *StringValidator) Validate(ctx *Context) bool {
-	_, ok := ctx.Value.(string)
-	return ok
-}
+func (v *StringValidator) Validate(ctx *Context) bool { _ = "STUB: not implemented"; return false }
 
 // Name returns the string name of the validator.
-func (v *StringValidator) Name() string { return "string" }
+func (v *StringValidator) Name() string {
+	_ = "STUB: not implemented"
 
-// IsType returns true.
-func (v *StringValidator) IsType() bool { return true }
-
-// String the field under validation must be a string.
-func String() *StringValidator {
-	return &StringValidator{}
+	// IsType returns true.
+	return ""
 }
+
+func (v *StringValidator) IsType() bool {
+	_ = "STUB: not implemented"
+
+	// String the field under validation must be a string.
+	return false
+}
+
+func String() *StringValidator { _ = "STUB: not implemented"; return nil }
 
 //------------------------------
 
@@ -36,28 +33,20 @@ type StartsWithValidator struct {
 }
 
 // Validate checks the field under validation satisfies this validator's criteria.
-func (v *StartsWithValidator) Validate(ctx *Context) bool {
-	val, ok := ctx.Value.(string)
-	return ok && lo.ContainsBy(v.Prefix, func(prefix string) bool {
-		return strings.HasPrefix(val, prefix)
-	})
-}
+func (v *StartsWithValidator) Validate(ctx *Context) bool { _ = "STUB: not implemented"; return false }
 
 // Name returns the string name of the validator.
-func (v *StartsWithValidator) Name() string { return "starts_with" }
+func (v *StartsWithValidator) Name() string { _ = "STUB: not implemented"; return "" }
 
 // MessagePlaceholders returns the ":values" placeholder.
 func (v *StartsWithValidator) MessagePlaceholders(_ *Context) []string {
-	return []string{
-		":values", strings.Join(v.Prefix, ", "),
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // StartsWith the field under validation must be a string starting
 // with at least one of the specified prefixes.
-func StartsWith(prefix ...string) *StartsWithValidator {
-	return &StartsWithValidator{Prefix: prefix}
-}
+func StartsWith(prefix ...string) *StartsWithValidator { _ = "STUB: not implemented"; return nil }
 
 //------------------------------
 
@@ -69,28 +58,24 @@ type EndsWithValidator struct {
 }
 
 // Validate checks the field under validation satisfies this validator's criteria.
-func (v *EndsWithValidator) Validate(ctx *Context) bool {
-	val, ok := ctx.Value.(string)
-	return ok && lo.ContainsBy(v.Suffix, func(prefix string) bool {
-		return strings.HasSuffix(val, prefix)
-	})
-}
+func (v *EndsWithValidator) Validate(ctx *Context) bool { _ = "STUB: not implemented"; return false }
 
 // Name returns the string name of the validator.
-func (v *EndsWithValidator) Name() string { return "ends_with" }
+func (v *EndsWithValidator) Name() string {
+	_ = "STUB: not implemented"
 
-// MessagePlaceholders returns the ":values" placeholder.
+	// MessagePlaceholders returns the ":values" placeholder.
+	return ""
+}
+
 func (v *EndsWithValidator) MessagePlaceholders(_ *Context) []string {
-	return []string{
-		":values", strings.Join(v.Suffix, ", "),
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // EndsWith the field under validation must be a string ending
 // with at least one of the specified prefixes.
-func EndsWith(suffix ...string) *EndsWithValidator {
-	return &EndsWithValidator{Suffix: suffix}
-}
+func EndsWith(suffix ...string) *EndsWithValidator { _ = "STUB: not implemented"; return nil }
 
 //------------------------------
 
@@ -103,26 +88,24 @@ type DoesntStartWithValidator struct {
 
 // Validate checks the field under validation satisfies this validator's criteria.
 func (v *DoesntStartWithValidator) Validate(ctx *Context) bool {
-	val, ok := ctx.Value.(string)
-	return ok && !lo.ContainsBy(v.Prefix, func(prefix string) bool {
-		return strings.HasPrefix(val, prefix)
-	})
+	_ = "STUB: not implemented"
+	return false
 }
 
 // Name returns the string name of the validator.
-func (v *DoesntStartWithValidator) Name() string { return "doesnt_start_with" }
+func (v *DoesntStartWithValidator) Name() string { _ = "STUB: not implemented"; return "" }
 
 // MessagePlaceholders returns the ":values" placeholder.
 func (v *DoesntStartWithValidator) MessagePlaceholders(_ *Context) []string {
-	return []string{
-		":values", strings.Join(v.Prefix, ", "),
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // DoesntStartWith the field under validation must be a string not starting
 // with any of the specified prefixes.
 func DoesntStartWith(prefix ...string) *DoesntStartWithValidator {
-	return &DoesntStartWithValidator{Prefix: prefix}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 //------------------------------
@@ -136,24 +119,19 @@ type DoesntEndWithValidator struct {
 
 // Validate checks the field under validation satisfies this validator's criteria.
 func (v *DoesntEndWithValidator) Validate(ctx *Context) bool {
-	val, ok := ctx.Value.(string)
-	return ok && !lo.ContainsBy(v.Suffix, func(prefix string) bool {
-		return strings.HasSuffix(val, prefix)
-	})
+	_ = "STUB: not implemented"
+	return false
 }
 
 // Name returns the string name of the validator.
-func (v *DoesntEndWithValidator) Name() string { return "doesnt_end_with" }
+func (v *DoesntEndWithValidator) Name() string { _ = "STUB: not implemented"; return "" }
 
 // MessagePlaceholders returns the ":values" placeholder.
 func (v *DoesntEndWithValidator) MessagePlaceholders(_ *Context) []string {
-	return []string{
-		":values", strings.Join(v.Suffix, ", "),
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // DoesntEndWith the field under validation must be a string not ending
 // with any of the specified prefixes.
-func DoesntEndWith(suffix ...string) *DoesntEndWithValidator {
-	return &DoesntEndWithValidator{Suffix: suffix}
-}
+func DoesntEndWith(suffix ...string) *DoesntEndWithValidator { _ = "STUB: not implemented"; return nil }

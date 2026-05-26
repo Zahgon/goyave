@@ -8,12 +8,7 @@ type OnlyIfValidator struct {
 
 // Validate executes the embedded validator only if the Condition returns true.
 // Otherwise immediately returns true.
-func (v *OnlyIfValidator) Validate(ctx *Context) bool {
-	if !v.Condition(ctx) {
-		return true
-	}
-	return v.Validator.Validate(ctx)
-}
+func (v *OnlyIfValidator) Validate(ctx *Context) bool { _ = "STUB: not implemented"; return false }
 
 // OnlyIf execute the given Validator only if the condition returns true.
 // This enables conditional validation.
@@ -28,8 +23,6 @@ func (v *OnlyIfValidator) Validate(ctx *Context) bool {
 //
 // This CANNOT be used with `Required()`, `RequiredIf()`, `Nullable()` or any type validator.
 func OnlyIf(condition func(*Context) bool, validator Validator) *OnlyIfValidator {
-	return &OnlyIfValidator{
-		Validator: validator,
-		Condition: condition,
-	}
+	_ = "STUB: not implemented"
+	return nil
 }

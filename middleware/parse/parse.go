@@ -1,16 +1,10 @@
 package parse
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
-	"io"
 	"net/http"
 	"net/url"
-	"strings"
 
 	"goyave.dev/goyave/v5"
-	"goyave.dev/goyave/v5/util/fsutil"
 )
 
 // Middleware reading the raw request query and body.
@@ -49,126 +43,21 @@ type Middleware struct {
 // If the current route is the special "not found" or "method not allowed" route,
 // the middleware is skipped and immediately passes.
 func (m *Middleware) Handle(next goyave.Handler) goyave.Handler {
-	return func(response *goyave.Response, r *goyave.Request) {
-		if r.Route.GetName() == goyave.RouteNotFound || r.Route.GetName() == goyave.RouteMethodNotAllowed {
-			next(response, r)
-			return
-		}
-		if err := parseQuery(r); err != nil {
-			response.Status(http.StatusBadRequest)
-			r.Extra[goyave.ExtraParseError{}] = fmt.Errorf("%w: %w", goyave.ErrInvalidQuery, err)
-			return
-		}
-
-		if r.Data != nil {
-			next(response, r)
-			return
-		}
-
-		r.Data = nil
-		contentType := r.Header().Get("Content-Type")
-		if contentType != "" {
-			maxSize := int64(m.getMaxUploadSize() * 1024 * 1024)
-			maxValueBytes := maxSize
-			var bodyBuf bytes.Buffer
-			n, err := io.CopyN(&bodyBuf, r.Body(), maxValueBytes+1)
-			if err == nil || err == io.EOF {
-				maxValueBytes -= n
-				if maxValueBytes < 0 {
-					response.Status(http.StatusRequestEntityTooLarge)
-					return
-				}
-
-				bodyBytes := bodyBuf.Bytes()
-				if strings.HasPrefix(contentType, "application/json") {
-					var body any
-					if err := json.Unmarshal(bodyBytes, &body); err != nil {
-						response.Status(http.StatusBadRequest)
-						r.Extra[goyave.ExtraParseError{}] = fmt.Errorf("%w: %w", goyave.ErrInvalidJSONBody, err)
-					}
-					r.Data = body
-				} else {
-					req := r.Request()
-					req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
-					r.Data, err = generateFlatMap(req, maxSize)
-					if err != nil {
-						response.Status(http.StatusBadRequest)
-						r.Extra[goyave.ExtraParseError{}] = fmt.Errorf("%w: %w", goyave.ErrInvalidContentForType, err)
-					}
-				}
-			} else {
-				response.Status(http.StatusBadRequest)
-				r.Extra[goyave.ExtraParseError{}] = fmt.Errorf("%w: %w", goyave.ErrErrorInRequestBody, err)
-			}
-		}
-
-		if response.GetStatus() != http.StatusBadRequest {
-			next(response, r)
-		}
-	}
+	_ = "STUB: not implemented"
+	return *new(goyave.Handler)
 }
 
-func (m *Middleware) getMaxUploadSize() float64 {
-	if m.MaxUploadSize == 0 {
-		return m.Config().GetFloat("server.maxUploadSize")
-	}
+func (m *Middleware) getMaxUploadSize() float64 { _ = "STUB: not implemented"; return 0 }
 
-	return m.MaxUploadSize
-}
-
-func parseQuery(request *goyave.Request) error {
-	queryParams, err := url.ParseQuery(request.URL().RawQuery)
-	if err == nil {
-		request.Query = make(map[string]any, len(queryParams))
-		flatten(request.Query, queryParams)
-	}
-	return err
-}
+func parseQuery(request *goyave.Request) error { _ = "STUB: not implemented"; return nil }
 
 func generateFlatMap(request *http.Request, maxSize int64) (map[string]any, error) {
-	flatMap := make(map[string]any)
-	request.Form = url.Values{} // Prevent Form from being parsed because it would be redundant with our parsing
-	err := request.ParseMultipartForm(maxSize)
-
-	if err != nil {
-		if err == http.ErrNotMultipart {
-			if err := request.ParseForm(); err != nil {
-				return nil, err
-			}
-		} else {
-			return nil, err
-		}
-	}
-
-	if request.PostForm != nil {
-		flatten(flatMap, request.PostForm)
-	}
-	if request.MultipartForm != nil {
-		flatten(flatMap, request.MultipartForm.Value)
-
-		for field, headers := range request.MultipartForm.File {
-			files, err := fsutil.ParseMultipartFiles(headers)
-			if err != nil {
-				return nil, err
-			}
-			flatMap[field] = files
-		}
-	}
-
-	// Source form is not needed anymore, clear it.
-	request.Form = nil
-	request.PostForm = nil
-	request.MultipartForm = nil
-
-	return flatMap, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-func flatten(dst map[string]any, values url.Values) {
-	for field, value := range values {
-		if len(value) > 1 {
-			dst[field] = value
-		} else {
-			dst[field] = value[0]
-		}
-	}
-}
+// Prevent Form from being parsed because it would be redundant with our parsing
+
+// Source form is not needed anymore, clear it.
+
+func flatten(dst map[string]any, values url.Values) { _ = "STUB: not implemented"; return }

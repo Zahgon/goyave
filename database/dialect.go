@@ -1,13 +1,10 @@
 package database
 
 import (
-	"strconv"
-	"strings"
 	"sync"
 
 	"gorm.io/gorm"
 	"goyave.dev/goyave/v5/config"
-	"goyave.dev/goyave/v5/util/errors"
 )
 
 var (
@@ -33,15 +30,7 @@ type dialect struct {
 	template    string
 }
 
-func (d dialect) buildDSN(cfg *config.Config) string {
-	connStr := d.template
-	for k, v := range optionPlaceholders {
-		connStr = strings.Replace(connStr, k, cfg.GetString(v), 1)
-	}
-	connStr = strings.Replace(connStr, "{port}", strconv.Itoa(cfg.GetInt("database.port")), 1)
-
-	return connStr
-}
+func (d dialect) buildDSN(cfg *config.Config) string { _ = "STUB: not implemented"; return "" }
 
 // RegisterDialect registers a connection string template for the given dialect.
 //
@@ -60,10 +49,6 @@ func (d dialect) buildDSN(cfg *config.Config) string {
 //
 //	{username}:{password}@({host}:{port})/{name}?{options}
 func RegisterDialect(name, template string, initializer DialectorInitializer) {
-	mu.Lock()
-	defer mu.Unlock()
-	if _, ok := dialects[name]; ok {
-		panic(errors.Errorf("dialect %q already exists", name))
-	}
-	dialects[name] = dialect{initializer, template}
+	_ = "STUB: not implemented"
+	return
 }

@@ -14,12 +14,14 @@ type AlphaValidator struct {
 }
 
 // Name returns the string name of the validator.
-func (v *AlphaValidator) Name() string { return "alpha" }
+func (v *AlphaValidator) Name() string {
+	_ = "STUB: not implemented"
 
-// Alpha the field under validation must be an alphabetic string.
-func Alpha() *AlphaValidator {
-	return &AlphaValidator{RegexValidator: RegexValidator{Regexp: alphaRegex}}
+	// Alpha the field under validation must be an alphabetic string.
+	return ""
 }
+
+func Alpha() *AlphaValidator { _ = "STUB: not implemented"; return nil }
 
 //------------------------------
 
@@ -29,12 +31,14 @@ type AlphaNumValidator struct {
 }
 
 // Name returns the string name of the validator.
-func (v *AlphaNumValidator) Name() string { return "alpha_num" }
+func (v *AlphaNumValidator) Name() string {
+	_ = "STUB: not implemented"
 
-// AlphaNum the field under validation must an alphabetic-numeric string.
-func AlphaNum() *AlphaNumValidator {
-	return &AlphaNumValidator{RegexValidator: RegexValidator{Regexp: alphaNumRegex}}
+	// AlphaNum the field under validation must an alphabetic-numeric string.
+	return ""
 }
+
+func AlphaNum() *AlphaNumValidator { _ = "STUB: not implemented"; return nil }
 
 //------------------------------
 
@@ -45,10 +49,12 @@ type AlphaDashValidator struct {
 }
 
 // Name returns the string name of the validator.
-func (v *AlphaDashValidator) Name() string { return "alpha_dash" }
+func (v *AlphaDashValidator) Name() string {
+	_ = "STUB: not implemented"
 
-// AlphaDash the field under validation must be a string made
-// of alphabetic-numeric characters, dashes or underscores.
-func AlphaDash() *AlphaDashValidator {
-	return &AlphaDashValidator{RegexValidator: RegexValidator{Regexp: alphaDashRegex}}
+	// AlphaDash the field under validation must be a string made
+	// of alphabetic-numeric characters, dashes or underscores.
+	return ""
 }
+
+func AlphaDash() *AlphaDashValidator { _ = "STUB: not implemented"; return nil }

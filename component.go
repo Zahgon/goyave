@@ -40,44 +40,39 @@ var _ Composable = (*Component)(nil)
 
 // Init the component using the given server.
 func (c *Component) Init(server *Server) {
-	c.server = server
+	_ = "STUB: not implemented"
+
+	// Server returns the parent server.
+	return
 }
 
-// Server returns the parent server.
 func (c *Component) Server() *Server {
-	return c.server
+	_ = "STUB: not implemented"
+
+	// Service returns the service identified by the given name.
+	// Panics if no service could be found with the given name.
+	return nil
 }
 
-// Service returns the service identified by the given name.
-// Panics if no service could be found with the given name.
-func (c *Component) Service(name string) Service {
-	return c.server.Service(name)
-}
+func (c *Component) Service(name string) Service { _ = "STUB: not implemented"; return *new(Service) }
 
 // LookupService search for a service by its name. If the service
 // identified by the given name exists, it is returned with the `true` boolean.
 // Otherwise returns `nil` and `false`.
 func (c *Component) LookupService(name string) (Service, bool) {
-	return c.server.LookupService(name)
+	_ = "STUB: not implemented"
+	return *new(Service), false
 }
 
 // Logger returns the server's logger.
-func (c *Component) Logger() *slog.Logger {
-	return c.server.Logger
-}
+func (c *Component) Logger() *slog.Logger { _ = "STUB: not implemented"; return nil }
 
 // DB returns the root database instance. Panics if no
 // database connection is set up.
-func (c *Component) DB() *gorm.DB {
-	return c.server.DB()
-}
+func (c *Component) DB() *gorm.DB { _ = "STUB: not implemented"; return nil }
 
 // Config returns the server's config.
-func (c *Component) Config() *config.Config {
-	return c.server.Config()
-}
+func (c *Component) Config() *config.Config { _ = "STUB: not implemented"; return nil }
 
 // Lang returns the languages loaded by the server.
-func (c *Component) Lang() *lang.Languages {
-	return c.server.Lang
-}
+func (c *Component) Lang() *lang.Languages { _ = "STUB: not implemented"; return nil }

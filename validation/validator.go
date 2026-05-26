@@ -3,14 +3,12 @@ package validation
 import (
 	"context"
 	"reflect"
-	"strings"
 	"time"
 
 	"gorm.io/gorm"
 	"goyave.dev/goyave/v5/config"
 	"goyave.dev/goyave/v5/lang"
 	"goyave.dev/goyave/v5/slog"
-	"goyave.dev/goyave/v5/util/errors"
 	"goyave.dev/goyave/v5/util/walk"
 )
 
@@ -63,39 +61,19 @@ type component struct {
 
 // DB get the database instance given through the validation Options.
 // Panics if there is none.
-func (c *component) DB() *gorm.DB {
-	if c.db == nil {
-		panic(errors.NewSkip("DB is not set in validation options", 3))
-	}
-	return c.db
-}
+func (c *component) DB() *gorm.DB { _ = "STUB: not implemented"; return nil }
 
 // Config get the configuration given through the validation Options.
 // Panics if there is none.
-func (c *component) Config() *config.Config {
-	if c.config == nil {
-		panic(errors.NewSkip("Config is not set in validation options", 3))
-	}
-	return c.config
-}
+func (c *component) Config() *config.Config { _ = "STUB: not implemented"; return nil }
 
 // Lang get the language given through the validation Options.
 // Panics if there is none.
-func (c *component) Lang() *lang.Language {
-	if c.lang == nil {
-		panic(errors.NewSkip("Language is not set in validation options", 3))
-	}
-	return c.lang
-}
+func (c *component) Lang() *lang.Language { _ = "STUB: not implemented"; return nil }
 
 // Logger get the Logger given through the validation Options.
 // Panics if there is none.
-func (c *component) Logger() *slog.Logger {
-	if c.logger == nil {
-		panic(errors.NewSkip("Logger is not set in validation options", 3))
-	}
-	return c.logger
-}
+func (c *component) Logger() *slog.Logger { _ = "STUB: not implemented"; return nil }
 
 // Options all the parameters required by `Validate()`.
 //
@@ -183,24 +161,18 @@ type Context struct {
 // AddError adds an error to the validation context. This is NOT supposed
 // to be used when the field under validation doesn't match the rule, but rather
 // when there has been an operation error (such as a database error).
-func (c *Context) AddError(err ...error) {
-	for _, e := range err {
-		c.errors = append(c.errors, errors.NewSkip(e, 3)) // Skipped: runtime.Callers, NewSkip, this func
-	}
-}
+func (c *Context) AddError(err ...error) { _ = "STUB: not implemented"; return }
+
+// Skipped: runtime.Callers, NewSkip, this func
 
 // AddArrayElementValidationErrors marks a child element to the field currently under validation
 // as invalid. This is useful when a validation rule validates an array and wants to
 // precisely mark which element in the array is invalid.
-func (c *Context) AddArrayElementValidationErrors(index ...int) {
-	c.arrayElementErrors = append(c.arrayElementErrors, index...)
-}
+func (c *Context) AddArrayElementValidationErrors(index ...int) { _ = "STUB: not implemented"; return }
 
 // ArrayElementErrors returns the indexes of the child eelements to the field currently under validation
 // that were marked as invalid with `AddArrayElementValidationErrors`.
-func (c *Context) ArrayElementErrors() []int {
-	return c.arrayElementErrors
-}
+func (c *Context) ArrayElementErrors() []int { _ = "STUB: not implemented"; return nil }
 
 // AddValidationError add a validation error message at the given path.
 // The path is relative to the root element.
@@ -208,15 +180,14 @@ func (c *Context) ArrayElementErrors() []int {
 // This can be used when a validation rule uses nested validation or needs to add
 // a message on another field than the one this validator is targeted at.
 func (c *Context) AddValidationError(path *walk.Path, message string) {
-	c.addedValidationErrors = append(c.addedValidationErrors, AddedValidationError[string]{
-		Path:  path,
-		Error: message,
-	})
+	_ = "STUB: not implemented"
+	return
 }
 
 // AddedValidationError returns the additional errors added with `AddValidationError`.
 func (c *Context) AddedValidationError() []AddedValidationError[string] {
-	return c.addedValidationErrors
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // AddValidationErrors add a `*Errors` to be merged into the errors bag of the current
@@ -227,33 +198,33 @@ func (c *Context) AddedValidationError() []AddedValidationError[string] {
 //
 // See `*validation.Errors.Merge` for more details.
 func (c *Context) AddValidationErrors(path *walk.Path, errors *Errors) {
-	c.mergeErrors = append(c.mergeErrors, AddedValidationError[*Errors]{
-		Path:  path,
-		Error: errors,
-	})
+	_ = "STUB: not implemented"
+	return
 }
 
 // AddedValidationErrors returns the additional errors added with `AddValidationErrors`.
 func (c *Context) AddedValidationErrors() []AddedValidationError[*Errors] {
-	return c.mergeErrors
+	_ = "STUB: not implemented"
+	return nil
+
+	// Path returns the exact Path to the current element.
+	// The path is relative to the root element. If you are compositing rule sets in your validation,
+	// the path returned is NOT relative to the root of the current rule set.
+	//
+	// You can use this path to inject validation errors using AddValidationError and MergeValidationErrors.
 }
 
-// Path returns the exact Path to the current element.
-// The path is relative to the root element. If you are compositing rule sets in your validation,
-// the path returned is NOT relative to the root of the current rule set.
-//
-// You can use this path to inject validation errors using AddValidationError and MergeValidationErrors.
 func (c *Context) Path() *walk.Path {
-	return c.path
+	_ = "STUB: not implemented"
+
+	// Errors returns this validation context's errors.
+	// The errors returned are NOT validation errors but operation errors (such as database error).
+	// Because each rule on each field has its own Context, the returned array will only contain
+	// errors related to the current field and the current rule.
+	return nil
 }
 
-// Errors returns this validation context's errors.
-// The errors returned are NOT validation errors but operation errors (such as database error).
-// Because each rule on each field has its own Context, the returned array will only contain
-// errors related to the current field and the current rule.
-func (c *Context) Errors() []error {
-	return c.errors
-}
+func (c *Context) Errors() []error { _ = "STUB: not implemented"; return nil }
 
 type validator struct {
 	validationErrors *Errors
@@ -270,323 +241,84 @@ type validator struct {
 // For example if a validator using the database generated a DB error.
 //
 // The `Options.Data` may be modified thanks to type rules.
-func Validate(options *Options) (*Errors, []error) {
-	validator := &validator{
-		options:          options,
-		now:              options.Now,
-		errors:           []error{},
-		validationErrors: &Errors{},
-	}
-	if validator.now.IsZero() {
-		validator.now = time.Now()
-	}
-	if options.Extra == nil {
-		options.Extra = map[any]any{}
-	}
-	if options.Language == nil {
-		options.Language = lang.Default
-	}
-	if options.Context == nil {
-		options.Context = context.Background()
-	}
+func Validate(options *Options) (*Errors, []error) { _ = "STUB: not implemented"; return nil, nil }
 
-	rules := options.Rules.AsRules()
-	for _, field := range rules {
-		if field.Path.Name != nil && *field.Path.Name == CurrentElement {
-			// Validate the root element
-			fakeParent := map[string]any{}
-			if options.Data != nil {
-				fakeParent[CurrentElement] = options.Data
-			}
-			validator.validateField(*field.Path.Name, field, fakeParent, nil)
-			options.Data = fakeParent[CurrentElement]
-		} else {
-			validator.validateField(field.Path.Tail().String(), field, options.Data, nil)
-		}
-	}
-
-	if len(validator.errors) != 0 {
-		return nil, validator.errors
-	}
-	if len(validator.validationErrors.Errors) != 0 || len(validator.validationErrors.Elements) != 0 || len(validator.validationErrors.Fields) != 0 {
-		return validator.validationErrors, nil
-	}
-	return nil, nil
-}
+// Validate the root element
 
 func (v *validator) validateField(fieldName string, field *Field, walkData any, parentPath *walk.Path) {
-	field.Path.Walk(walkData, func(c *walk.Context) {
-		parentObject, parentIsObject := c.Parent.(map[string]any)
-		shouldDeleteFromParent := v.shouldDeleteFromParent(field, parentIsObject, c.Value)
-		if c.Found == walk.Found {
-			if shouldDeleteFromParent {
-				delete(parentObject, c.Name)
-				c.Found = walk.ElementNotFound
-			} else {
-				if v.shouldConvertSingleValueArray(fieldName) {
-					c.Value = v.convertSingleValueArray(field, c.Value)
-					parentObject[c.Name] = c.Value
-				}
-			}
-		}
-
-		if v.isAbsent(field, c, parentPath, v.options.Data) {
-			return
-		}
-
-		if field.Elements != nil {
-			// This is an array, validate its elements first so it can be converted to correct type
-			if newValue, ok := makeGenericSlice(c.Value); ok {
-				replaceValue(c.Value, c)
-				c.Value = newValue
-			}
-
-			path := c.Path
-			if parentPath != nil {
-				clone := parentPath.Clone()
-				tail := clone.Tail()
-				tail.Type = walk.PathTypeArray
-				tail.Index = &c.Index
-				tail.Next = path.Next
-				path = clone
-			}
-			v.validateField(fieldName+"[]", field.Elements, c.Value, path)
-		}
-
-		data := v.options.Data
-
-		if field.prefixDepth > 0 {
-			fullPath := appendPath(parentPath, c.Path, c.Index)
-			if rootPath := fullPath.Truncate(field.prefixDepth); rootPath != nil {
-				// We can use `First` here because the path contains array indexes
-				// so we are sure there will be only one match.
-				data = rootPath.First(data).Value
-			}
-		}
-
-		value := c.Value
-		valid := true
-		translatedFieldName := ""
-		for _, validator := range field.Validators {
-			if _, ok := validator.(*NullableValidator); ok {
-				if value == nil {
-					break
-				}
-				continue
-			}
-
-			errorPath := field.getErrorPath(parentPath, c)
-			ctx := &Context{
-				Context:   v.options.Context,
-				Data:      data,
-				Extra:     v.options.Extra,
-				Value:     value,
-				Parent:    c.Parent,
-				Field:     field,
-				fieldName: fieldName,
-				Now:       v.now,
-				Name:      c.Name,
-				path:      errorPath,
-				Invalid:   !valid,
-			}
-			validator.Init(v.options)
-			ok := validator.Validate(ctx)
-			if len(ctx.errors) > 0 {
-				valid = false
-				v.errors = append(v.errors, ctx.errors...)
-				continue
-			}
-			if !ok {
-				valid = false
-				if translatedFieldName == "" {
-					translatedFieldName = translateFieldName(v.options.Language, fieldName)
-				}
-				message := v.getMessage(ctx, translatedFieldName, validator)
-				if v.isRootElement(fieldName, errorPath) {
-					v.validationErrors.Add(errorPath, message)
-				} else {
-					v.validationErrors.Add(&walk.Path{Type: walk.PathTypeObject, Next: errorPath}, message)
-				}
-				continue
-			}
-
-			v.processAddedErrors(ctx, parentPath, c, validator)
-
-			value = ctx.Value
-		}
-		// Value may be modified (converting rule), replace it in the parent element
-		if !shouldDeleteFromParent {
-			replaceValue(value, c)
-		}
-	})
+	_ = "STUB: not implemented"
+	return
 }
 
+// This is an array, validate its elements first so it can be converted to correct type
+
+// We can use `First` here because the path contains array indexes
+// so we are sure there will be only one match.
+
+// Value may be modified (converting rule), replace it in the parent element
+
 func (v *validator) isRootElement(fieldName string, errorPath *walk.Path) bool {
-	return fieldName == CurrentElement || (errorPath.Type == walk.PathTypeArray && (errorPath.Name == nil || *errorPath.Name == CurrentElement))
+	_ = "STUB: not implemented"
+	return false
 }
 
 func (v *validator) shouldDeleteFromParent(field *Field, parentIsObject bool, value any) bool {
-	return parentIsObject && !field.IsNullable() && value == nil
+	_ = "STUB: not implemented"
+	return false
 }
 
 func (v *validator) shouldConvertSingleValueArray(fieldName string) bool {
+	_ = "STUB: not implemented"
 	// It's OK not to check for escape characters for the brackets here since the fieldName is the
 	// escaped representation of the field name: e.g.: "escapedArray\[\]" and "escapedArray\[\][]"
-	return v.options.ConvertSingleValueArrays && fieldName != CurrentElement && !strings.Contains(fieldName, "[]")
+	return false
 }
 
 func (v *validator) convertSingleValueArray(field *Field, value any) any {
-	if value == nil || !field.IsArray() {
-		return value
-	}
-	rv := reflect.ValueOf(value)
-	kind := rv.Kind().String()
-	if kind != "slice" {
-		rt := reflect.TypeOf(value)
-		slice := reflect.MakeSlice(reflect.SliceOf(rt), 0, 1)
-		slice = reflect.Append(slice, rv)
-		return slice.Interface()
-	}
-	return value
+	_ = "STUB: not implemented"
+	return *new(any)
 }
 
 func (v *validator) isAbsent(field *Field, c *walk.Context, parentPath *walk.Path, data any) bool {
-	if c.Found == walk.ParentNotFound {
-		return true
-	}
-	requiredCtx := &Context{
-		Context: v.options.Context,
-		Data:    data,
-		Extra:   v.options.Extra,
-		Value:   c.Value,
-		Parent:  c.Parent,
-		Field:   field,
-		Now:     v.now,
-		Name:    c.Name,
-		path:    field.getErrorPath(parentPath, c),
-		Invalid: false,
-	}
-	return c.Found == walk.ElementNotFound && !field.IsRequired(requiredCtx)
+	_ = "STUB: not implemented"
+	return false
 }
 
 func (v *validator) processAddedErrors(ctx *Context, parentPath *walk.Path, c *walk.Context, validator Validator) {
-	for _, e := range ctx.addedValidationErrors {
-		v.validationErrors.Add(&walk.Path{Type: walk.PathTypeObject, Next: e.Path}, e.Error)
-	}
-	for _, e := range ctx.mergeErrors {
-		v.validationErrors.Merge(&walk.Path{Type: walk.PathTypeObject, Next: e.Path}, e.Error)
-	}
-	if len(ctx.arrayElementErrors) > 0 {
-		errorPath := ctx.Field.getErrorPath(parentPath, c)
-		message := v.options.Language.Get(v.getLangEntry(ctx, validator)+".element", v.processPlaceholders(ctx, translateFieldName(v.options.Language, ctx.fieldName), validator)...)
-		for _, index := range ctx.arrayElementErrors {
-			i := index
-			elementPath := errorPath.Clone()
-			elementPath.Type = walk.PathTypeArray
-			elementPath.Index = &i
-			elementPath.Next = &walk.Path{Type: walk.PathTypeElement}
-			if ctx.fieldName == CurrentElement {
-				v.validationErrors.Add(elementPath, message)
-			} else {
-				v.validationErrors.Add(&walk.Path{Type: walk.PathTypeObject, Next: elementPath}, message)
-			}
-		}
-	}
+	_ = "STUB: not implemented"
+	return
 }
 
 func (v *validator) getLangEntry(ctx *Context, validator Validator) string {
-	override := validator.getMessageOverride()
-	if override != "" {
-		return override
-	}
-	langEntry := "validation.rules." + validator.Name()
-	if validator.IsTypeDependent() {
-		typeValidator := v.findTypeValidator(ctx.Field.Validators)
-		if typeValidator == nil {
-			langEntry += "." + GetFieldType(ctx.Value)
-		} else {
-			typeName := typeValidator.Name()
-			switch typeValidator.(type) {
-			case *Float32Validator, *Float64Validator,
-				*IntValidator, *Int8Validator, *Int16Validator, *Int32Validator, *Int64Validator,
-				*UintValidator, *Uint8Validator, *Uint16Validator, *Uint32Validator, *Uint64Validator:
-				typeName = FieldTypeNumeric
-			}
-			langEntry += "." + typeName
-		}
-	}
-
-	lastParent := ctx.Field.Path.LastParent()
-	if lastParent != nil && lastParent.Type == walk.PathTypeArray {
-		langEntry += ".element"
-	}
-	return langEntry
+	_ = "STUB: not implemented"
+	return ""
 }
 
 func (v *validator) processPlaceholders(ctx *Context, translatedFieldName string, validator Validator) []string {
-	return append([]string{":field", translatedFieldName}, validator.MessagePlaceholders(ctx)...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (v *validator) getMessage(ctx *Context, translatedFieldName string, validator Validator) string {
-	langEntry := v.getLangEntry(ctx, validator)
-	return v.options.Language.Get(langEntry, v.processPlaceholders(ctx, translatedFieldName, validator)...)
+	_ = "STUB: not implemented"
+	return ""
 }
 
 // findTypeValidator find the expected type of a field for a given array dimension.
 func (v *validator) findTypeValidator(validators []Validator) Validator {
-	for _, validator := range validators {
-		if validator.IsType() {
-			return validator
-		}
-	}
-
-	return nil
+	_ = "STUB: not implemented"
+	return *new(Validator)
 }
 
-func replaceValue(value any, c *walk.Context) {
-	if c.Found != walk.Found {
-		return
-	}
+func replaceValue(value any, c *walk.Context) { _ = "STUB: not implemented"; return }
 
-	if parentObject, ok := c.Parent.(map[string]any); ok {
-		parentObject[c.Name] = value
-	} else {
-		// Parent is slice
-		parent := c.Parent.([]any)
-		parent[c.Index] = value
-	}
-}
+// Parent is slice
 
-func makeGenericSlice(original any) ([]any, bool) {
-	if o, ok := original.([]any); ok {
-		return o, false
-	}
-	list := reflect.ValueOf(original)
-	if !list.IsValid() || list.Kind() != reflect.Slice {
-		return []any{}, false
-	}
-	length := list.Len()
-	newSlice := make([]any, 0, length)
-	for i := range length {
-		newSlice = append(newSlice, list.Index(i).Interface())
-	}
-	return newSlice, true
-}
+func makeGenericSlice(original any) ([]any, bool) { _ = "STUB: not implemented"; return nil, false }
 
 func appendPath(parentPath, childPath *walk.Path, index int) *walk.Path {
-	fullPath := childPath
-	if parentPath != nil {
-		fullPath = parentPath.Clone()
-		tail := fullPath.LastParent()
-		if tail != nil {
-			tail.Next = childPath
-		} else {
-			fullPath.Type = walk.PathTypeArray
-			fullPath.Index = &index
-			fullPath.Next = childPath
-		}
-	}
-	return fullPath
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // GetFieldType returns the non-technical type of the given "value" interface.
@@ -598,68 +330,20 @@ func appendPath(parentPath, childPath *walk.Path, index int) *walk.Path {
 //   - "file" (`lang.FieldTypeFile`) if the value is a slice of "fsutil.File"
 //   - "bool" (`lang.FieldTypeBool`) if the value is a bool
 //   - "unsupported" (`lang.FieldTypeUnsupported`) otherwise
-func GetFieldType(value any) string {
-	return getFieldType(reflect.ValueOf(value))
-}
+func GetFieldType(value any) string { _ = "STUB: not implemented"; return "" }
 
-func getFieldType(value reflect.Value) string {
-	kind := value.Kind().String()
-	switch {
-	case strings.HasPrefix(kind, "int"), strings.HasPrefix(kind, "uint") && kind != "uintptr", strings.HasPrefix(kind, "float"):
-		return FieldTypeNumeric
-	case kind == "string":
-		return FieldTypeString
-	case kind == "bool":
-		return FieldTypeBool
-	case kind == "slice":
-		if value.Type().String() == "[]fsutil.File" {
-			return FieldTypeFile
-		}
-		return FieldTypeArray
-	default:
-		if value.IsValid() {
-			if _, ok := value.Interface().(map[string]any); ok {
-				return FieldTypeObject
-			}
-		}
-		return FieldTypeUnsupported
-	}
-}
+func getFieldType(value reflect.Value) string { _ = "STUB: not implemented"; return "" }
 
 // GetFieldName returns the localized name of the field identified
 // by the given path.
 func GetFieldName(lang *lang.Language, path *walk.Path) string {
-	return translateFieldName(lang, path.String())
+	_ = "STUB: not implemented"
+	return ""
 }
 
 func translateFieldName(lang *lang.Language, fieldName string) string {
-	if i := lastUnescapedDot(fieldName); i != -1 {
-		fieldName = fieldName[i+1:]
-	}
-	fieldName = walk.Unescape(fieldName)
-	for {
-		f := strings.TrimSuffix(fieldName, "[]")
-		if len(f) == len(fieldName) {
-			break
-		}
-		fieldName = f
-	}
-	entry := "validation.fields." + fieldName
-	name := lang.Get(entry)
-	if name == entry {
-		return fieldName
-	}
-	return name
+	_ = "STUB: not implemented"
+	return ""
 }
 
-func lastUnescapedDot(str string) int {
-	for i := len(str) - 1; i >= 0; i-- {
-		if str[i] == '.' {
-			if i > 0 && str[i-1] == '\\' {
-				continue
-			}
-			return i
-		}
-	}
-	return -1
-}
+func lastUnescapedDot(str string) int { _ = "STUB: not implemented"; return 0 }

@@ -1,16 +1,10 @@
 package auth
 
 import (
-	"crypto/subtle"
-	"errors"
-	"fmt"
 	"reflect"
 
-	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 	"goyave.dev/goyave/v5"
 	"goyave.dev/goyave/v5/config"
-	errorutil "goyave.dev/goyave/v5/util/errors"
 )
 
 // BasicAuthenticator implementation of Authenticator with the Basic
@@ -41,10 +35,8 @@ type BasicAuthenticator[T any] struct {
 // The `passwordField` corresponds to the name of T's struct field that holds the user's hashed password.
 // It will be used to compare the password hash with the user input.
 func NewBasicAuthenticator[T any](userService UserService[T], passwordField string) *BasicAuthenticator[T] {
-	return &BasicAuthenticator[T]{
-		UserService:   userService,
-		PasswordField: passwordField,
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Authenticate fetch the user corresponding to the credentials
@@ -52,43 +44,16 @@ func NewBasicAuthenticator[T any](userService UserService[T], passwordField stri
 // If no user can be authenticated, returns an error.
 // The password is checked using bcrypt.
 func (a *BasicAuthenticator[T]) Authenticate(request *goyave.Request) (*T, error) {
-	username, password, ok := request.BasicAuth()
-
-	if !ok {
-		if a.Optional {
-			return nil, nil
-		}
-		return nil, fmt.Errorf("%s", request.Lang.Get("auth.no-credentials-provided"))
-	}
-
-	user, err := a.UserService.FindByUsername(request.Context(), username)
-
-	notFound := errors.Is(err, gorm.ErrRecordNotFound)
-	if err != nil && !notFound {
-		panic(errorutil.New(err))
-	}
-
-	t := reflect.Indirect(reflect.ValueOf(user))
-	for t.Kind() == reflect.Ptr {
-		t = t.Elem()
-	}
-	pass := t.FieldByName(a.PasswordField)
-	if pass.Kind() == reflect.Invalid {
-		panic(errorutil.Errorf("could not find valid field/column %q in type %T", a.PasswordField, user))
-	}
-
-	if notFound || bcrypt.CompareHashAndPassword([]byte(pass.String()), []byte(password)) != nil {
-		return nil, fmt.Errorf("%s", request.Lang.Get("auth.invalid-credentials"))
-	}
-
-	return user, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (a *BasicAuthenticator[T]) Scheme() string {
-	return "Basic"
-}
+	_ = "STUB: not implemented"
 
-//--------------------------------------------
+	// --------------------------------------------
+	return ""
+}
 
 func init() {
 	config.Register("auth.basic.username", config.Entry{
@@ -119,38 +84,27 @@ type ConfigBasicAuthenticator struct {
 // Authenticate check if the request basic auth header matches the
 // "auth.basic.username" and "auth.basic.password" config entries.
 func (a *ConfigBasicAuthenticator) Authenticate(request *goyave.Request) (*BasicUser, error) {
-	username, password, ok := request.BasicAuth()
-
-	if !ok {
-		return nil, fmt.Errorf("%s", request.Lang.Get("auth.no-credentials-provided"))
-	}
-
-	if subtle.ConstantTimeCompare([]byte(a.Config().GetString("auth.basic.username")), []byte(username)) != 1 ||
-		subtle.ConstantTimeCompare([]byte(a.Config().GetString("auth.basic.password")), []byte(password)) != 1 {
-		return nil, fmt.Errorf("%s", request.Lang.Get("auth.invalid-credentials"))
-	}
-
-	return &BasicUser{
-		Name: username,
-	}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (a *ConfigBasicAuthenticator) Scheme() string {
-	return "Basic"
+	_ = "STUB: not implemented"
+
+	// ConfigBasicAuth create a new authenticator middleware for
+	// config-based Basic authentication. On auth success, the request
+	// user is set to a `*BasicUser`.
+	// The user is authenticated if the "auth.basic.username" and "auth.basic.password" config entries
+	// match the request's Authorization header.
+	return ""
 }
 
-// ConfigBasicAuth create a new authenticator middleware for
-// config-based Basic authentication. On auth success, the request
-// user is set to a `*BasicUser`.
-// The user is authenticated if the "auth.basic.username" and "auth.basic.password" config entries
-// match the request's Authorization header.
-func ConfigBasicAuth() *Handler[BasicUser] {
-	return Middleware(&ConfigBasicAuthenticator{})
-}
+func ConfigBasicAuth() *Handler[BasicUser] { _ = "STUB: not implemented"; return nil }
 
 // ConfigBasicAuthWithRealm is the same as ConfigBasicAuth but with a custom realm description.
 // The realm describes the protected area and is returned in the `WWW-Authenticate` header
 // when the authentication fails.
 func ConfigBasicAuthWithRealm(realm string) *Handler[BasicUser] {
-	return MiddlewareWithRealm(&ConfigBasicAuthenticator{}, realm)
+	_ = "STUB: not implemented"
+	return nil
 }

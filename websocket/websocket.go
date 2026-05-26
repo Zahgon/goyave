@@ -2,12 +2,8 @@ package websocket
 
 import (
 	"net/http"
-	"time"
-
-	stderrors "errors"
 
 	"goyave.dev/goyave/v5"
-	"goyave.dev/goyave/v5/util/errors"
 
 	ws "github.com/gorilla/websocket"
 )
@@ -135,56 +131,22 @@ type Upgrader struct {
 }
 
 // New create a new Upgrader with default settings.
-func New(controller Controller) *Upgrader {
-	return &Upgrader{
-		Controller: controller,
-	}
-}
+func New(controller Controller) *Upgrader { _ = "STUB: not implemented"; return nil }
 
 // RegisterRoutes implementation of `goyave.Registrer`.
 //
 // If the `websocket.Controller` implements `websocket.Registrer`, uses its implementation
 // to register the route. Otherwise registers the route for the GET method and an empty path.
-func (u *Upgrader) RegisterRoutes(router *goyave.Router) {
-	if registrer, ok := u.Controller.(Registrer); ok {
-		registrer.RegisterRoute(router, u.Handler())
-		return
-	}
-	router.Get("", u.Handler())
-}
+func (u *Upgrader) RegisterRoutes(router *goyave.Router) { _ = "STUB: not implemented"; return }
 
 func (u *Upgrader) defaultUpgradeErrorHandler(response *goyave.Response, _ *goyave.Request, status int, reason error) {
-	text := http.StatusText(status)
-	if u.Config().GetBool("app.debug") && reason != nil {
-		text = reason.Error()
-	}
-	message := map[string]string{
-		"error": text,
-	}
-	response.JSON(status, message)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (u *Upgrader) makeUpgrader(request *goyave.Request) *ws.Upgrader {
-	upgradeErrorHandlerFunc := u.defaultUpgradeErrorHandler
-	if upgradeErrorHandler, ok := u.Controller.(UpgradeErrorHandler); ok {
-		upgradeErrorHandlerFunc = upgradeErrorHandler.OnUpgradeError
-	}
-
-	var checkOrigin func(r *goyave.Request) bool
-	if originChecker, ok := u.Controller.(OriginChecker); ok {
-		checkOrigin = originChecker.CheckOrigin
-	}
-
-	a := adapter{
-		upgradeErrorHandler: upgradeErrorHandlerFunc,
-		checkOrigin:         checkOrigin,
-		request:             request,
-	}
-
-	upgrader := u.Settings
-	upgrader.Error = a.onError
-	upgrader.CheckOrigin = a.getCheckOriginFunc()
-	return &upgrader
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Handler create an HTTP handler upgrading the HTTP connection before passing it
@@ -210,55 +172,16 @@ func (u *Upgrader) makeUpgrader(request *goyave.Request) *ws.Upgrader {
 // This HTTP Handler returns once the connection has been successfully upgraded. That means
 // that, for example, logging middleware will log the request right away instead of waiting
 // for the websocket connection to be closed.
-func (u *Upgrader) Handler() goyave.Handler {
-	u.Controller.Init(u.Server())
-	return func(response *goyave.Response, request *goyave.Request) {
-		var headers http.Header
-		if headerUpgrader, ok := u.Controller.(HeaderUpgrader); ok {
-			headers = headerUpgrader.UpgradeHeaders(request)
-		}
-
-		c, err := u.makeUpgrader(request).Upgrade(response, request.Request(), headers)
-		if err != nil {
-			return
-		}
-		response.Status(http.StatusSwitchingProtocols)
-
-		go u.serve(c, request, u.Controller.Serve)
-	}
-}
+func (u *Upgrader) Handler() goyave.Handler { _ = "STUB: not implemented"; return *new(goyave.Handler) }
 
 func (u *Upgrader) serve(c *ws.Conn, request *goyave.Request, handler func(*Conn, *goyave.Request) error) {
-	conn := newConn(c, time.Duration(u.Config().GetInt("server.websocketCloseTimeout"))*time.Second)
-	panicked := true
-	var err error
-	defer func() { // Panic recovery
-		if panicReason := recover(); panicReason != nil || panicked {
-			err = errors.NewSkip(panicReason, 4) // Skipped: runtime.Callers, NewSkip, this func, runtime.panic
-		}
-
-		if IsCloseError(err) {
-			_ = conn.CloseNormal()
-			return
-		}
-		if err != nil {
-			if errorHandler, ok := u.Controller.(ErrorHandler); ok {
-				errorHandler.OnError(request, err)
-			} else {
-				u.Logger().Error(err)
-			}
-			_ = conn.CloseWithError(err)
-		} else {
-			_ = conn.internalClose(ws.CloseNormalClosure, NormalClosureMessage)
-		}
-	}()
-
-	err = handler(conn, request)
-	if err != nil {
-		err = errors.New(err)
-	}
-	panicked = false
+	_ = "STUB: not implemented"
+	return
 }
+
+// Panic recovery
+
+// Skipped: runtime.Callers, NewSkip, this func, runtime.panic
 
 type adapter struct {
 	upgradeErrorHandler upgradeErrorHandlerFunc
@@ -267,33 +190,15 @@ type adapter struct {
 }
 
 func (a *adapter) onError(w http.ResponseWriter, _ *http.Request, status int, reason error) {
-	if status == http.StatusInternalServerError {
-		panic(errors.New(reason))
-	}
-	w.Header().Set("Sec-Websocket-Version", "13")
-	a.upgradeErrorHandler(w.(*goyave.Response), a.request, status, reason)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (a *adapter) getCheckOriginFunc() func(r *http.Request) bool {
-	if a.checkOrigin != nil {
-		return func(_ *http.Request) bool {
-			return a.checkOrigin(a.request)
-		}
-	}
-
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // IsCloseError returns true if the error is one of the following close errors:
 // CloseNormalClosure (1000), CloseGoingAway (1001) or CloseNoStatusReceived (1005)
-func IsCloseError(err error) bool {
-	var closeError *ws.CloseError
-	if stderrors.As(err, &closeError) {
-		err = closeError
-	}
-	return ws.IsCloseError(err,
-		ws.CloseNormalClosure,
-		ws.CloseGoingAway,
-		ws.CloseNoStatusReceived,
-	)
-}
+func IsCloseError(err error) bool { _ = "STUB: not implemented"; return false }

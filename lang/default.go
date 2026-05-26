@@ -215,20 +215,14 @@ var Default = enUS
 // SetDefaultLine set the language line identified by the given key in the
 // default "en-US" language.
 // Values set this way can be overridden by language files.
-func SetDefaultLine(key, line string) {
-	enUS.lines[key] = line
-}
+func SetDefaultLine(key, line string) { _ = "STUB: not implemented"; return }
 
 // SetDefaultValidationRule set the validation error message for the rule identified by
 // the given key in the default "en-US" language.
 // Values set this way can be overridden by language files.
-func SetDefaultValidationRule(key, line string) {
-	enUS.validation.rules[key] = line
-}
+func SetDefaultValidationRule(key, line string) { _ = "STUB: not implemented"; return }
 
 // SetDefaultFieldName set the field name used in validation error message placeholders
 // for the given field in the default "en-US" language.
 // Values set this way can be overridden by language files.
-func SetDefaultFieldName(field, name string) {
-	enUS.validation.fields[field] = name
-}
+func SetDefaultFieldName(field, name string) { _ = "STUB: not implemented"; return }

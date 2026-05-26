@@ -4,7 +4,6 @@ import (
 	"io"
 
 	"github.com/klauspost/compress/zstd"
-	"goyave.dev/goyave/v5/util/errors"
 )
 
 // Zstd encoder for the Zstandard compression algorithm
@@ -16,15 +15,14 @@ type Zstd struct {
 
 // Encoding returns "zstd".
 func (w *Zstd) Encoding() string {
-	return "zstd"
+	_ = "STUB: not implemented"
+
+	// NewWriter returns a new `zstd.Encoder` using the zstd.EOptions
+	// defined in the Zstd encoder.
+	return ""
 }
 
-// NewWriter returns a new `zstd.Encoder` using the zstd.EOptions
-// defined in the Zstd encoder.
 func (w *Zstd) NewWriter(wr io.Writer) io.WriteCloser {
-	writer, err := zstd.NewWriter(wr, w.Options...)
-	if err != nil {
-		panic(errors.New(err))
-	}
-	return writer
+	_ = "STUB: not implemented"
+	return *new(io.WriteCloser)
 }

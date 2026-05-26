@@ -8,17 +8,21 @@ type NullableValidator struct{ BaseValidator }
 
 // Validate returns true.
 func (v *NullableValidator) Validate(_ *Context) bool {
-	return true
+	_ = "STUB: not implemented"
+
+	// Name returns the string name of the validator.
+	return false
 }
 
-// Name returns the string name of the validator.
-func (v *NullableValidator) Name() string { return "nullable" }
+func (v *NullableValidator) Name() string {
+	_ = "STUB: not implemented"
 
-// Nullable indicates `nil` values are accepted. If this field under validation is not
-// nullable and its value is `nil`, it will be removed from the input data.
-//
-// If the field under validation is nullable and its value is `nil`, all subsequent
-// validators are skipped.
-func Nullable() *NullableValidator {
-	return &NullableValidator{}
+	// Nullable indicates `nil` values are accepted. If this field under validation is not
+	// nullable and its value is `nil`, it will be removed from the input data.
+	//
+	// If the field under validation is nullable and its value is `nil`, all subsequent
+	// validators are skipped.
+	return ""
 }
+
+func Nullable() *NullableValidator { _ = "STUB: not implemented"; return nil }

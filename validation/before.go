@@ -1,11 +1,7 @@
 package validation
 
 import (
-	"fmt"
 	"time"
-
-	"goyave.dev/goyave/v5/util/errors"
-	"goyave.dev/goyave/v5/util/walk"
 )
 
 // BeforeValidator validates the field under validation must be a date (`time.Time`) before
@@ -15,19 +11,17 @@ type BeforeValidator struct {
 }
 
 // Validate checks the field under validation satisfies this validator's criteria.
-func (v *BeforeValidator) Validate(ctx *Context) bool {
-	return v.validate(ctx, func(t1, t2 time.Time) bool {
-		return t1.Before(t2)
-	})
-}
+func (v *BeforeValidator) Validate(ctx *Context) bool { _ = "STUB: not implemented"; return false }
 
 // Name returns the string name of the validator.
-func (v *BeforeValidator) Name() string { return "before" }
+func (v *BeforeValidator) Name() string {
+	_ = "STUB: not implemented"
 
-// Before the field under validation must be a date (`time.Time`) before the given date.
-func Before(date time.Time) *BeforeValidator {
-	return &BeforeValidator{DateComparisonValidator: DateComparisonValidator{Date: date}}
+	// Before the field under validation must be a date (`time.Time`) before the given date.
+	return ""
 }
+
+func Before(date time.Time) *BeforeValidator { _ = "STUB: not implemented"; return nil }
 
 //------------------------------
 
@@ -38,19 +32,13 @@ type BeforeEqualValidator struct {
 }
 
 // Validate checks the field under validation satisfies this validator's criteria.
-func (v *BeforeEqualValidator) Validate(ctx *Context) bool {
-	return v.validate(ctx, func(t1, t2 time.Time) bool {
-		return t1.Before(t2) || t1.Equal(t2)
-	})
-}
+func (v *BeforeEqualValidator) Validate(ctx *Context) bool { _ = "STUB: not implemented"; return false }
 
 // Name returns the string name of the validator.
-func (v *BeforeEqualValidator) Name() string { return "before_equal" }
+func (v *BeforeEqualValidator) Name() string { _ = "STUB: not implemented"; return "" }
 
 // BeforeEqual the field under validation must be a date (`time.Time`) before or equal to the given date.
-func BeforeEqual(date time.Time) *BeforeEqualValidator {
-	return &BeforeEqualValidator{DateComparisonValidator: DateComparisonValidator{Date: date}}
-}
+func BeforeEqual(date time.Time) *BeforeEqualValidator { _ = "STUB: not implemented"; return nil }
 
 //------------------------------
 
@@ -61,24 +49,18 @@ type BeforeFieldValidator struct {
 }
 
 // Validate checks the field under validation satisfies this validator's criteria.
-func (v *BeforeFieldValidator) Validate(ctx *Context) bool {
-	return v.validate(ctx, func(t1, t2 time.Time) bool {
-		return t1.Before(t2)
-	})
-}
+func (v *BeforeFieldValidator) Validate(ctx *Context) bool { _ = "STUB: not implemented"; return false }
 
 // Name returns the string name of the validator.
-func (v *BeforeFieldValidator) Name() string { return "before" }
+func (v *BeforeFieldValidator) Name() string {
+	_ = "STUB: not implemented"
 
-// BeforeField the field under validation must be a date (`time.Time`) before the date field identified
-// by the given path.
-func BeforeField(path string) *BeforeFieldValidator {
-	p, err := walk.Parse(path)
-	if err != nil {
-		panic(errors.NewSkip(fmt.Errorf("validation.BeforeField: path parse error: %w", err), 3))
-	}
-	return &BeforeFieldValidator{DateFieldComparisonValidator: DateFieldComparisonValidator{Path: p}}
+	// BeforeField the field under validation must be a date (`time.Time`) before the date field identified
+	// by the given path.
+	return ""
 }
+
+func BeforeField(path string) *BeforeFieldValidator { _ = "STUB: not implemented"; return nil }
 
 //------------------------------
 
@@ -90,20 +72,16 @@ type BeforeEqualFieldValidator struct {
 
 // Validate checks the field under validation satisfies this validator's criteria.
 func (v *BeforeEqualFieldValidator) Validate(ctx *Context) bool {
-	return v.validate(ctx, func(t1, t2 time.Time) bool {
-		return t1.Before(t2) || t1.Equal(t2)
-	})
+	_ = "STUB: not implemented"
+	return false
 }
 
 // Name returns the string name of the validator.
-func (v *BeforeEqualFieldValidator) Name() string { return "before_equal" }
+func (v *BeforeEqualFieldValidator) Name() string { _ = "STUB: not implemented"; return "" }
 
 // BeforeEqualField the field under validation must be a date (`time.Time`) before or equal to the date field identified
 // by the given path.
 func BeforeEqualField(path string) *BeforeEqualFieldValidator {
-	p, err := walk.Parse(path)
-	if err != nil {
-		panic(errors.NewSkip(fmt.Errorf("validation.BeforeEqualField: path parse error: %w", err), 3))
-	}
-	return &BeforeEqualFieldValidator{DateFieldComparisonValidator: DateFieldComparisonValidator{Path: p}}
+	_ = "STUB: not implemented"
+	return nil
 }

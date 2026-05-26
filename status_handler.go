@@ -1,12 +1,5 @@
 package goyave
 
-import (
-	"errors"
-	"net/http"
-
-	"goyave.dev/goyave/v5/validation"
-)
-
 // StatusHandler is a regular handler executed during the finalization step of the request's lifecycle
 // if the response body is empty but a status code has been set.
 // Status handlers are mainly used to implement a custom behavior for user or server errors (400 and 500 status codes).
@@ -26,13 +19,8 @@ type PanicStatusHandler struct {
 
 // Handle internal server error responses.
 func (*PanicStatusHandler) Handle(response *Response, _ *Request) {
-	response.error(response.GetError())
-	if response.IsEmpty() && (response.GetStatus() == http.StatusInternalServerError || !response.wroteHeader) && !response.Hijacked() {
-		message := map[string]string{
-			"error": http.StatusText(http.StatusInternalServerError),
-		}
-		response.JSON(http.StatusInternalServerError, message)
-	}
+	_ = "STUB: not implemented"
+	return
 }
 
 // ErrorStatusHandler a generic status handler for non-success codes.
@@ -43,10 +31,8 @@ type ErrorStatusHandler struct {
 
 // Handle generic error responses.
 func (*ErrorStatusHandler) Handle(response *Response, _ *Request) {
-	message := map[string]string{
-		"error": http.StatusText(response.GetStatus()),
-	}
-	response.JSON(response.GetStatus(), message)
+	_ = "STUB: not implemented"
+	return
 }
 
 // ParseErrorStatusHandler a generic (error) status handler for requests.
@@ -56,31 +42,8 @@ type ParseErrorStatusHandler struct {
 
 // Handle generic request (error) responses.
 func (h *ParseErrorStatusHandler) Handle(response *Response, request *Request) {
-	var errorMessage string
-	lang := request.Lang
-
-	err, ok := request.Extra[ExtraParseError{}].(error)
-	if ok {
-		switch {
-		case errors.Is(err, ErrInvalidJSONBody):
-			errorMessage = lang.Get("parse.json-invalid-body")
-		case errors.Is(err, ErrInvalidQuery):
-			errorMessage = lang.Get("parse.invalid-query")
-		case errors.Is(err, ErrInvalidContentForType):
-			errorMessage = lang.Get("parse.invalid-content-for-type")
-		case errors.Is(err, ErrErrorInRequestBody):
-			errorMessage = lang.Get("parse.error-in-request-body")
-		default:
-			errorMessage = lang.Get(err.Error())
-		}
-	} else {
-		errorMessage = http.StatusText(response.GetStatus())
-	}
-
-	message := map[string]string{
-		"error": errorMessage,
-	}
-	response.JSON(response.GetStatus(), message)
+	_ = "STUB: not implemented"
+	return
 }
 
 // ValidationStatusHandler for HTTP 422 errors.
@@ -91,16 +54,6 @@ type ValidationStatusHandler struct {
 
 // Handle validation error responses.
 func (*ValidationStatusHandler) Handle(response *Response, request *Request) {
-	errs := &validation.ErrorResponse{}
-
-	if e, ok := request.Extra[ExtraValidationError{}]; ok {
-		errs.Body = e.(*validation.Errors)
-	}
-
-	if e, ok := request.Extra[ExtraQueryValidationError{}]; ok {
-		errs.Query = e.(*validation.Errors)
-	}
-
-	message := map[string]*validation.ErrorResponse{"error": errs}
-	response.JSON(response.GetStatus(), message)
+	_ = "STUB: not implemented"
+	return
 }

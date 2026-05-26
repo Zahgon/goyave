@@ -4,14 +4,9 @@ import (
 	"bytes"
 	"context"
 	"io"
-	"runtime"
-	"strconv"
-	"strings"
 	"sync"
 
 	"log/slog"
-
-	"goyave.dev/goyave/v5/util/errors"
 )
 
 // Colors and formats
@@ -59,23 +54,15 @@ type DevModeHandler struct {
 // NewHandler creates a new `slog.Handler` with default options.
 // If `devMode` is true, a `*DevModeHandler` is returned, else a `*slog.JSONHandler`.
 func NewHandler(devMode bool, w io.Writer) slog.Handler {
-	if devMode {
-		return NewDevModeHandler(w, &DevModeHandlerOptions{Level: slog.LevelDebug})
-	}
-	return slog.NewJSONHandler(w, &slog.HandlerOptions{Level: slog.LevelInfo, AddSource: true})
+	_ = "STUB: not implemented"
+	return *new(slog.Handler)
 }
 
 // NewDevModeHandler creates a new `DevModeHandler` that writes to w, using the given options.
 // If `opts` is `nil`, the default options are used.
 func NewDevModeHandler(w io.Writer, opts *DevModeHandlerOptions) *DevModeHandler {
-	if opts == nil {
-		opts = &DevModeHandlerOptions{}
-	}
-	return &DevModeHandler{
-		w:    w,
-		mu:   &sync.Mutex{},
-		opts: opts,
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Handle formats its argument `Record` in an output easily readable by humans.
@@ -86,150 +73,62 @@ func NewDevModeHandler(w io.Writer, opts *DevModeHandlerOptions) *DevModeHandler
 //
 // Each call to `Handle` results in a single serialized call to `io.Writer.Write()`.
 func (h *DevModeHandler) Handle(_ context.Context, r slog.Record) error {
-	buf := bytes.NewBuffer(make([]byte, 0, 1024))
-
-	buf.WriteRune('\n')
-	buf.WriteString(levelColor(r.Level)) // Change color depending on level
-	buf.WriteByte(' ')
-	buf.WriteString(r.Level.String())
-	buf.WriteByte(' ')
-	buf.WriteString(Reset)
-	buf.WriteByte(' ')
-
-	buf.WriteString(r.Time.Format("2006/01/02 15:04:05.999999"))
-	fs := runtime.CallersFrames([]uintptr{r.PC})
-	f, _ := fs.Next()
-	buf.WriteString(Gray)
-	buf.WriteString(" (")
-	buf.WriteString(f.File)
-	buf.WriteByte(':')
-	buf.WriteString(strconv.Itoa(f.Line))
-	buf.WriteString(")")
-	buf.WriteString(Reset)
-	buf.WriteByte('\n')
-	buf.WriteString(messageColor(r.Level))
-	buf.WriteString(r.Message)
-	buf.WriteString(Reset)
-	buf.WriteByte('\n')
-
-	indent := 0
-	for _, group := range h.groups {
-		indentString := strings.Repeat(Indent, indent)
-		buf.WriteString(indentString)
-		buf.WriteString(WhiteBold)
-		buf.WriteString(group)
-		buf.WriteString(":\n")
-		indent++
-	}
-	for _, attr := range h.attrs {
-		printAttr(attr, buf, indent)
-	}
-	r.Attrs(func(a slog.Attr) bool {
-		printAttr(a, buf, indent)
-		return true
-	})
-
-	h.mu.Lock()
-	defer h.mu.Unlock()
-	_, err := h.w.Write(buf.Bytes())
-	return errors.New(err)
+	_ = "STUB: not implemented"
+	return nil
 }
+
+// Change color depending on level
 
 // levelColor return a color for the tag describing the level in the output.
 // We use ranges so custom levels can be supported.
-func levelColor(level slog.Level) string {
-	switch {
-	case level < slog.LevelInfo: // Debug
-		return BGCyan + WhiteBold
-	case level < slog.LevelWarn: // Info
-		return BGGray + WhiteBold
-	case level < slog.LevelError: // Warn
-		return BGYellow + GrayBold
-	default: // Error
-		return BGRed + WhiteBold
-	}
-}
+func levelColor(level slog.Level) string { _ = "STUB: not implemented"; return "" }
 
-func messageColor(level slog.Level) string {
-	switch {
-	case level < slog.LevelWarn: // Debug and Info
-		return ""
-	case level < slog.LevelError: // Warn
-		return Yellow
-	default: // Error
-		return Red
-	}
-}
+// Debug
+
+// Info
+
+// Warn
+
+// Error
+
+func messageColor(level slog.Level) string { _ = "STUB: not implemented"; return "" }
+
+// Debug and Info
+
+// Warn
+
+// Error
 
 // Enabled reports whether the handler handles records at the given level.
 // The handler ignores records whose level is lower.
 func (h *DevModeHandler) Enabled(_ context.Context, level slog.Level) bool {
-	minLevel := slog.LevelInfo
-	if h.opts.Level != nil {
-		minLevel = h.opts.Level.Level()
-	}
-	return level >= minLevel
+	_ = "STUB: not implemented"
+	return false
 }
 
 // WithAttrs returns a new `DevModeHandler` whose attributes consists
 // of h's attributes followed by attrs.
 func (h *DevModeHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
-	newAttrs := make([]slog.Attr, 0, len(h.attrs)+len(attrs))
-	newAttrs = append(newAttrs, h.attrs...)
-	newAttrs = append(newAttrs, attrs...)
-	return &DevModeHandler{
-		opts:   h.opts,
-		w:      h.w,
-		mu:     h.mu,
-		attrs:  newAttrs,
-		groups: h.groups,
-	}
+	_ = "STUB: not implemented"
+	return *new(slog.Handler)
 }
 
 // WithGroup returns a new `DevModeHandler` whose attributes are wrapped
 // into a named group. All the handler's attributes will be printed indented
 // into the added group.
 func (h *DevModeHandler) WithGroup(name string) slog.Handler {
-	return &DevModeHandler{
-		opts:   h.opts,
-		w:      h.w,
-		mu:     h.mu,
-		attrs:  append(make([]slog.Attr, 0, len(h.attrs)), h.attrs...),
-		groups: append(h.groups, name),
-	}
+	_ = "STUB: not implemented"
+	return *new(slog.Handler)
 }
 
-func printAttr(attr slog.Attr, buf *bytes.Buffer, indent int) {
-	indentString := strings.Repeat(Indent, indent)
-	buf.WriteString(indentString)
-	buf.WriteString(WhiteBold)
-	buf.WriteString(attr.Key)
-	buf.WriteString(": ")
+func printAttr(attr slog.Attr, buf *bytes.Buffer, indent int) { _ = "STUB: not implemented"; return }
 
-	if attr.Value.Kind() == slog.KindAny {
-		// This may be a struct or map, convert it if needed
-		attr.Value = StructValue(attr.Value.Any())
-	}
+// This may be a struct or map, convert it if needed
 
-	if attr.Value.Kind() == slog.KindGroup {
-		buf.WriteByte('\n')
-		printGroup(attr.Value.Group(), buf, indent+1)
-	} else {
-		val := attr.Value.String()
-		if strings.Contains(val, "\n") {
-			// Break line if the message is multi-line (such as stacktrace)
-			// Otherwise print it next to attr name so the log is more compact
-			buf.WriteByte('\n')
-			buf.WriteString(indentString)
-		}
-		buf.WriteString(Reset)
-		buf.WriteString(val)
-		buf.WriteByte('\n')
-	}
-}
+// Break line if the message is multi-line (such as stacktrace)
+// Otherwise print it next to attr name so the log is more compact
 
 func printGroup(group []slog.Attr, buf *bytes.Buffer, indent int) {
-	for _, attr := range group {
-		printAttr(attr, buf, indent)
-	}
+	_ = "STUB: not implemented"
+	return
 }

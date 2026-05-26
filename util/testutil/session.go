@@ -5,8 +5,6 @@ import (
 	stderrors "errors"
 	"sync/atomic"
 
-	"github.com/samber/lo"
-	"goyave.dev/goyave/v5/util/errors"
 	"goyave.dev/goyave/v5/util/session"
 )
 
@@ -53,62 +51,23 @@ type Session struct {
 }
 
 // NewTestSession create a new root session with the `context.Background()`.
-func NewTestSession() *Session {
-	return &Session{
-		ctx:      context.Background(),
-		cancel:   nil,
-		children: []*Session{},
-		status:   atomic.Uint32{},
-	}
-}
+func NewTestSession() *Session { _ = "STUB: not implemented"; return nil }
 
 // Begin returns a new child session with the given context.
 func (s *Session) Begin(ctx context.Context) (session.Session, error) {
-	if s.status.Load() != SessionCreated {
-		return nil, ErrSessionEnded
-	}
-	if err := ctx.Err(); err != nil {
-		return nil, errors.New(err)
-	}
-
-	parent := ctx.Value(ctxKey{})
-	if s.cancel != nil && parent != s {
-		// Not the root session, we are creating a nested transaction
-		// The given context should belong to the parent session.
-		return nil, errors.New(ErrNotParentContext)
-	}
-
-	childCtx, cancel := context.WithCancel(ctx)
-	tx := &Session{
-		cancel:   cancel,
-		children: []*Session{},
-		status:   atomic.Uint32{},
-	}
-	tx.ctx = context.WithValue(childCtx, ctxKey{}, tx)
-	if parent != nil {
-		parentSession := parent.(*Session)
-		parentSession.children = append(parentSession.children, tx)
-	} else {
-		s.children = append(s.children, tx)
-	}
-	return tx, nil
+	_ = "STUB: not implemented"
+	return *new(session.Session), nil
 }
+
+// Not the root session, we are creating a nested transaction
+// The given context should belong to the parent session.
 
 // Transaction executes a transaction. If the given function returns an error, the transaction
 // is rolled back. Otherwise it is automatically committed before `Transaction()` returns.
 // The underlying transaction mechanism is injected into the context as a value.
 func (s *Session) Transaction(ctx context.Context, f func(context.Context) error) error {
-	tx, err := s.Begin(ctx)
-	if err != nil {
-		return errors.New(err)
-	}
-
-	err = errors.New(f(tx.Context()))
-	if err != nil {
-		rollbackErr := errors.New(tx.Rollback())
-		return errors.New([]error{err, rollbackErr})
-	}
-	return errors.New(tx.Commit())
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Rollback the transaction. For this test utility, it only sets the sessions status to `SessionRollbedBack`.
@@ -117,20 +76,7 @@ func (s *Session) Transaction(ctx context.Context, f func(context.Context) error
 // It is not possible to roll back the root session. In this case, `testutil.ErrEndRootSession` is returned.
 //
 // This action is final.
-func (s *Session) Rollback() error {
-	if s.cancel == nil {
-		return errors.New(ErrEndRootSession)
-	}
-	if s.hasRunningChild() {
-		return errors.New(ErrChildRunning)
-	}
-	swapped := s.status.CompareAndSwap(SessionCreated, SessionRolledBack)
-	if !swapped {
-		return errors.New(ErrSessionEnded)
-	}
-	s.cancel()
-	return nil
-}
+func (s *Session) Rollback() error { _ = "STUB: not implemented"; return nil }
 
 // Commit the transaction. For this test utility, it only sets the sessions status to `SessionCommitted`.
 // If the session status is not `testutil.SessionCreated`, returns `testutil.ErrSessionEnded`.
@@ -138,37 +84,18 @@ func (s *Session) Rollback() error {
 // It is not possible to commit the root session. In this case, `testutil.ErrEndRootSession` is returned.
 //
 // This action is final.
-func (s *Session) Commit() error {
-	if s.cancel == nil {
-		return errors.New(ErrEndRootSession)
-	}
-	if err := s.ctx.Err(); err != nil {
-		if s.Status() != SessionCreated {
-			return errors.New([]error{err, ErrSessionEnded})
-		}
-		return errors.New(err)
-	}
-	if s.hasRunningChild() {
-		return errors.New(ErrChildRunning)
-	}
-	swapped := s.status.CompareAndSwap(SessionCreated, SessionCommitted)
-	if !swapped {
-		return errors.New(ErrSessionEnded)
-	}
-	s.cancel()
-	return nil
-}
+func (s *Session) Commit() error { _ = "STUB: not implemented"; return nil }
 
 // Context returns the session's context.
 func (s *Session) Context() context.Context {
-	return s.ctx
+	_ = "STUB: not implemented"
+
+	// Status returns the session status. The value will be equal to `testutil.SessionCreated`,
+	// `testutil.SessionCommitted` or `testutil.SessionRolledBack`.
+	return *new(context.Context)
 }
 
-// Status returns the session status. The value will be equal to `testutil.SessionCreated`,
-// `testutil.SessionCommitted` or `testutil.SessionRolledBack`.
-func (s *Session) Status() uint32 {
-	return s.status.Load()
-}
+func (s *Session) Status() uint32 { _ = "STUB: not implemented"; return 0 }
 
 // Children returns the direct child sessions. You can use the returned values for your test assertions.
 // The returned values are sorted in the order in which the child transactions were started.
@@ -176,12 +103,6 @@ func (s *Session) Status() uint32 {
 // To access nested transactions, call `Children()` on the returned values.
 //
 // This method always returns a non-nil value but can return an empty slice.
-func (s *Session) Children() []*Session {
-	return s.children
-}
+func (s *Session) Children() []*Session { _ = "STUB: not implemented"; return nil }
 
-func (s *Session) hasRunningChild() bool {
-	return lo.SomeBy(s.children, func(child *Session) bool {
-		return child.Status() == SessionCreated
-	})
-}
+func (s *Session) hasRunningChild() bool { _ = "STUB: not implemented"; return false }

@@ -10,23 +10,21 @@ type RegexValidator struct {
 }
 
 // Validate checks the field under validation satisfies this validator's criteria.
-func (v *RegexValidator) Validate(ctx *Context) bool {
-	val, ok := ctx.Value.(string)
-	return ok && v.Regexp.MatchString(val)
-}
+func (v *RegexValidator) Validate(ctx *Context) bool { _ = "STUB: not implemented"; return false }
 
 // Name returns the string name of the validator.
-func (v *RegexValidator) Name() string { return "regex" }
+func (v *RegexValidator) Name() string {
+	_ = "STUB: not implemented"
 
-// MessagePlaceholders returns the ":regexp" placeholder.
+	// MessagePlaceholders returns the ":regexp" placeholder.
+	return ""
+}
+
 func (v *RegexValidator) MessagePlaceholders(_ *Context) []string {
-	return []string{
-		":regexp", v.Regexp.String(),
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Regex the field under validation must be a string matching
 // the specified `*regexp.Regexp`.
-func Regex(regex *regexp.Regexp) *RegexValidator {
-	return &RegexValidator{Regexp: regex}
-}
+func Regex(regex *regexp.Regexp) *RegexValidator { _ = "STUB: not implemented"; return nil }

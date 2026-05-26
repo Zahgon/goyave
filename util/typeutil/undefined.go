@@ -1,13 +1,7 @@
 package typeutil
 
 import (
-	"database/sql"
 	"database/sql/driver"
-	"encoding"
-	"encoding/json"
-
-	"goyave.dev/copier"
-	"goyave.dev/goyave/v5/util/errors"
 )
 
 // Undefined utility type wrapping a generic value used to differentiate
@@ -39,87 +33,48 @@ type Undefined[T any] struct {
 }
 
 // NewUndefined creates a new `Undefined` wrapper with `Present` set to `true`.
-func NewUndefined[T any](val T) Undefined[T] {
-	return Undefined[T]{
-		Val:     val,
-		Present: true,
-	}
-}
+func NewUndefined[T any](val T) Undefined[T] { _ = "STUB: not implemented"; return nil }
 
 // Set the value. Automatically sets `Present` to `true`.
-func (u *Undefined[T]) Set(value T) {
-	u.Val = value
-	u.Present = true
-}
+func (u *Undefined[T]) Set(value T) { _ = "STUB: not implemented"; return }
 
 // Unset the value (reset to zero-value) and set `Present` to `false`.
 // This effectively works like if the value was entirely removed from the struct.
-func (u *Undefined[T]) Unset() {
-	var v T
-	u.Val = v
-	u.Present = false
-}
+func (u *Undefined[T]) Unset() { _ = "STUB: not implemented"; return }
 
 // UnmarshalJSON implements json.Unmarshaler.
 // On successful unmarshal of the underlying value, sets the `Present` field to `true`.
-func (u *Undefined[T]) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, &u.Val); err != nil {
-		return errors.Errorf("typeutil.Undefined: couldn't unmarshal JSON: %w", err)
-	}
-
-	u.Present = true
-	return nil
-}
+func (u *Undefined[T]) UnmarshalJSON(data []byte) error { _ = "STUB: not implemented"; return nil }
 
 // MarshalJSON implements json.Marshaler.
 // Only the value is marshaled, even if the field is not present.
 // Therefore, it is recommended to use the json tag `omitzero`.
-func (u Undefined[T]) MarshalJSON() ([]byte, error) {
-	data, err := json.Marshal(u.Val)
-	if err != nil {
-		return nil, errors.Errorf("typeutil.Undefined: couldn't JSON marshal: %w", err)
-	}
-	return data, nil
-}
+func (u Undefined[T]) MarshalJSON() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // UnmarshalText implements encoding.TextUnmarshaler.
 // If the input is a blank string, `Present` is set to `false`, otherwise `true`.
 // This implementation will return an error if the underlying value doesn't implement
 // `encoding.TextUnmarshaler`.
-func (u *Undefined[T]) UnmarshalText(text []byte) error {
-	u.Present = len(text) > 0
-	if textUnmarshaler, ok := any(&u.Val).(encoding.TextUnmarshaler); ok {
-		if err := textUnmarshaler.UnmarshalText(text); err != nil {
-			return errors.New(err)
-		}
-		u.Present = true
-		return nil
-	}
-
-	return errors.New("typeutil.Undefined: cannot unmarshal text: underlying value doesn't implement encoding.TextUnmarshaler")
-}
+func (u *Undefined[T]) UnmarshalText(text []byte) error { _ = "STUB: not implemented"; return nil }
 
 // IsZero returns true for non-present values.
 func (u Undefined[T]) IsZero() bool {
-	return !u.Present
+	_ = "STUB: not implemented"
+
+	// IsPresent returns true for present values.
+	return false
 }
 
-// IsPresent returns true for present values.
 func (u Undefined[T]) IsPresent() bool {
-	return u.Present
+	_ = "STUB: not implemented"
+
+	// Value implements the `driver.Valuer` interface.
+	return false
 }
 
-// Value implements the `driver.Valuer` interface.
 func (u Undefined[T]) Value() (driver.Value, error) {
-	if !u.Present {
-		return nil, nil
-	}
-
-	if valuer, ok := any(u.Val).(driver.Valuer); ok {
-		v, err := valuer.Value()
-		return v, errors.New(err)
-	}
-	return u.Val, nil
+	_ = "STUB: not implemented"
+	return *new(driver.Value), nil
 }
 
 // Scan implements the `sql.Scanner` interface.
@@ -133,57 +88,10 @@ func (u Undefined[T]) Value() (driver.Value, error) {
 // the above, T's `Scan()` method will be used.
 //
 // This implementation is also useful in the case of model mapping with `typeutil.Copy`.
-func (u *Undefined[T]) Scan(src any) error {
-	u.Present = true
-
-	switch val := src.(type) {
-	case nil:
-		var t T
-		u.Val = t
-	case Undefined[T]:
-		u.Val = val.Val
-	case *Undefined[T]:
-		if val == nil {
-			var t T
-			u.Val = t
-		} else {
-			u.Val = val.Val
-		}
-	case T:
-		u.Val = val
-	case *T:
-		if val == nil {
-			var t T
-			u.Val = t
-		} else {
-			u.Val = *val
-		}
-	default:
-		if scanner, ok := any(&u.Val).(sql.Scanner); ok {
-			return errors.New(scanner.Scan(src))
-		}
-		var t T
-		return errors.Errorf("typeutil.Undefined: Scan() incompatible types (src: %T, dst: %T)", src, t)
-	}
-	return nil
-}
+func (u *Undefined[T]) Scan(src any) error { _ = "STUB: not implemented"; return nil }
 
 // CopyValue implements the copier.Valuer interface.
-func (u Undefined[T]) CopyValue() any {
-	if !u.Present {
-		return nil
-	}
-
-	if valuer, ok := any(u.Val).(copier.Valuer); ok {
-		return valuer.CopyValue()
-	}
-	return u.Val
-}
+func (u Undefined[T]) CopyValue() any { _ = "STUB: not implemented"; return *new(any) }
 
 // Default return the value if present, otherwise returns the given default value.
-func (u Undefined[T]) Default(defaultValue T) T {
-	if u.Present {
-		return u.Val
-	}
-	return defaultValue
-}
+func (u Undefined[T]) Default(defaultValue T) T { _ = "STUB: not implemented"; return *new(T) }

@@ -1,11 +1,5 @@
 package validation
 
-import (
-	"strings"
-
-	"github.com/samber/lo"
-)
-
 // KeysInValidator the field under validation must be an object and all its keys must
 // be equal to one of the given values.
 type KeysInValidator struct {
@@ -14,39 +8,21 @@ type KeysInValidator struct {
 }
 
 // Validate checks the field under validation satisfies this validator's criteria.
-func (v *KeysInValidator) Validate(ctx *Context) bool {
-	obj, ok := ctx.Value.(map[string]any)
-	if !ok {
-		return false
-	}
-
-	allowedKeys := make(map[string]struct{})
-	for _, key := range v.Keys {
-		allowedKeys[key] = struct{}{}
-	}
-
-	for key := range obj {
-		if _, ok := allowedKeys[key]; !ok {
-			return false
-		}
-	}
-	return true
-}
+func (v *KeysInValidator) Validate(ctx *Context) bool { _ = "STUB: not implemented"; return false }
 
 // Name returns the string name of the validator.
-func (v *KeysInValidator) Name() string { return "keys_in" }
+func (v *KeysInValidator) Name() string {
+	_ = "STUB: not implemented"
 
-// MessagePlaceholders returns the ":values" placeholder.
+	// MessagePlaceholders returns the ":values" placeholder.
+	return ""
+}
+
 func (v *KeysInValidator) MessagePlaceholders(_ *Context) []string {
-	return []string{
-		":values", strings.Join(v.Keys, ", "),
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // KeysIn the field under validation must be an object and all its keys must
 // be equal to one of the given values.
-func KeysIn[T ~string](keys ...T) *KeysInValidator {
-	return &KeysInValidator{Keys: lo.Map(keys, func(k T, _ int) string {
-		return string(k)
-	})}
-}
+func KeysIn[T ~string](keys ...T) *KeysInValidator { _ = "STUB: not implemented"; return nil }

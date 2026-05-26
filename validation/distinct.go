@@ -7,31 +7,17 @@ type DistinctValidator[T comparable] struct {
 }
 
 // Validate checks the field under validation satisfies this validator's criteria.
-func (v *DistinctValidator[T]) Validate(ctx *Context) bool {
-	if empty, ok := ctx.Value.([]any); ok && len(empty) == 0 {
-		// The array will stay `[]any` even after recursive validation if it's empty.
-		// We don't want to check distinct elements for empty arrays.
-		return true
-	}
-	list, ok := ctx.Value.([]T)
-	if !ok {
-		return false
-	}
+func (v *DistinctValidator[T]) Validate(ctx *Context) bool { _ = "STUB: not implemented"; return false }
 
-	found := make(map[T]struct{}, len(list))
-	for _, v := range list {
-		if _, ok := found[v]; ok {
-			return false
-		}
-		found[v] = struct{}{}
-	}
-	return true
-}
+// The array will stay `[]any` even after recursive validation if it's empty.
+// We don't want to check distinct elements for empty arrays.
 
 // Name returns the string name of the validator.
-func (v *DistinctValidator[T]) Name() string { return "distinct" }
+func (v *DistinctValidator[T]) Name() string {
+	_ = "STUB: not implemented"
 
-// Distinct the field under validation must be an array having distinct values.
-func Distinct[T comparable]() *DistinctValidator[T] {
-	return &DistinctValidator[T]{}
+	// Distinct the field under validation must be an array having distinct values.
+	return ""
 }
+
+func Distinct[T comparable]() *DistinctValidator[T] { _ = "STUB: not implemented"; return nil }

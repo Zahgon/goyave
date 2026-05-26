@@ -1,10 +1,7 @@
 package compress
 
 import (
-	"compress/gzip"
 	"io"
-
-	"goyave.dev/goyave/v5/util/errors"
 )
 
 // Gzip encoder for the gzip format using Go's standard `compress/gzip` package.
@@ -17,15 +14,14 @@ type Gzip struct {
 
 // Encoding returns "gzip".
 func (w *Gzip) Encoding() string {
-	return "gzip"
+	_ = "STUB: not implemented"
+
+	// NewWriter returns a new `compress/gzip.Writer` using the compression level
+	// defined in this Gzip encoder.
+	return ""
 }
 
-// NewWriter returns a new `compress/gzip.Writer` using the compression level
-// defined in this Gzip encoder.
 func (w *Gzip) NewWriter(wr io.Writer) io.WriteCloser {
-	writer, err := gzip.NewWriterLevel(wr, w.Level)
-	if err != nil {
-		panic(errors.New(err))
-	}
-	return writer
+	_ = "STUB: not implemented"
+	return *new(io.WriteCloser)
 }

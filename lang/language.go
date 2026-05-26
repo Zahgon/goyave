@@ -1,10 +1,5 @@
 package lang
 
-import (
-	"maps"
-	"strings"
-)
-
 type validationLines struct {
 	// Default messages for rules
 	rules map[string]string
@@ -21,26 +16,9 @@ type Language struct {
 }
 
 // Name returns the name of the language. For example "en-US".
-func (l *Language) Name() string {
-	return l.name
-}
+func (l *Language) Name() string { _ = "STUB: not implemented"; return "" }
 
-func (l *Language) clone() *Language {
-	cpy := &Language{
-		name:  l.name,
-		lines: make(map[string]string, len(l.lines)),
-		validation: validationLines{
-			rules:  make(map[string]string, len(l.validation.rules)),
-			fields: make(map[string]string, len(l.validation.fields)),
-		},
-	}
-
-	maps.Copy(cpy.lines, l.lines)
-	maps.Copy(cpy.validation.rules, l.validation.rules)
-	maps.Copy(cpy.validation.fields, l.validation.fields)
-
-	return cpy
-}
+func (l *Language) clone() *Language { _ = "STUB: not implemented"; return nil }
 
 // Get a language line.
 //
@@ -59,29 +37,16 @@ func (l *Language) clone() *Language {
 //
 //	lang.Get("greetings", ":username", user.Name)
 func (l *Language) Get(line string, placeholders ...string) string {
-	if strings.HasPrefix(line, "validation.rules.") {
-		return convertEmptyLine(line, l.validation.rules[line[17:]], placeholders)
-	} else if strings.HasPrefix(line, "validation.fields.") {
-		return convertEmptyLine(line, l.validation.fields[line[18:]], placeholders)
-	}
-
-	return convertEmptyLine(line, l.lines[line], placeholders)
+	_ = "STUB: not implemented"
+	return ""
 }
 
 func convertEmptyLine(entry, line string, placeholders []string) string {
-	if line == "" {
-		return entry
-	}
-	return processPlaceholders(line, placeholders)
+	_ = "STUB: not implemented"
+	return ""
 }
 
 func processPlaceholders(message string, values []string) string {
-	length := len(values) - 1
-	result := message
-	for i := 0; i < length; i += 2 {
-		if strings.Contains(message, values[i]) {
-			result = strings.ReplaceAll(result, values[i], values[i+1])
-		}
-	}
-	return result
+	_ = "STUB: not implemented"
+	return ""
 }

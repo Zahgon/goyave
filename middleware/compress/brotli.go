@@ -2,9 +2,6 @@ package compress
 
 import (
 	"io"
-
-	"github.com/andybalholm/brotli"
-	"goyave.dev/goyave/v5/util/errors"
 )
 
 // Brotli encoder for the br compression format
@@ -19,22 +16,14 @@ type Brotli struct {
 
 // Encoding returns "br".
 func (w *Brotli) Encoding() string {
-	return "br"
+	_ = "STUB: not implemented"
+
+	// NewWriter returns a new `brotli.Writer` using the
+	// Compression Quality and LGWin provided in the Brotli encoder
+	return ""
 }
 
-// NewWriter returns a new `brotli.Writer` using the
-// Compression Quality and LGWin provided in the Brotli encoder
 func (w *Brotli) NewWriter(wr io.Writer) io.WriteCloser {
-	if w.Quality < brotli.BestSpeed || w.Quality > brotli.BestCompression {
-		panic(errors.New("Brotli Compression Level must be in range [0, 11]"))
-	}
-	if w.LGWin != 0 {
-		if w.LGWin < 10 || w.LGWin > 24 {
-			panic(errors.New("Brotli LGWin must be either 0 or within range [10, 24]"))
-		}
-	}
-	return brotli.NewWriterOptions(wr, brotli.WriterOptions{
-		Quality: w.Quality,
-		LGWin:   w.LGWin,
-	})
+	_ = "STUB: not implemented"
+	return *new(io.WriteCloser)
 }

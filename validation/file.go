@@ -1,11 +1,5 @@
 package validation
 
-import (
-	"strconv"
-
-	"goyave.dev/goyave/v5/util/fsutil"
-)
-
 // FileValidator validates the field under validation must be a file.
 // Multi-files are supported.
 type FileValidator struct {
@@ -13,21 +7,24 @@ type FileValidator struct {
 }
 
 // Validate checks the field under validation satisfies this validator's criteria.
-func (v *FileValidator) Validate(ctx *Context) bool {
-	_, ok := ctx.Value.([]fsutil.File)
-	return ok
-}
+func (v *FileValidator) Validate(ctx *Context) bool { _ = "STUB: not implemented"; return false }
 
 // Name returns the string name of the validator.
-func (v *FileValidator) Name() string { return "file" }
+func (v *FileValidator) Name() string {
+	_ = "STUB: not implemented"
 
-// IsType returns true.
-func (v *FileValidator) IsType() bool { return true }
-
-// File the field under validation must be a file. Multi-files are supported.
-func File() *FileValidator {
-	return &FileValidator{}
+	// IsType returns true.
+	return ""
 }
+
+func (v *FileValidator) IsType() bool {
+	_ = "STUB: not implemented"
+
+	// File the field under validation must be a file. Multi-files are supported.
+	return false
+}
+
+func File() *FileValidator { _ = "STUB: not implemented"; return nil }
 
 //------------------------------
 
@@ -39,26 +36,24 @@ type FileCountValidator struct {
 }
 
 // Validate checks the field under validation satisfies this validator's criteria.
-func (v *FileCountValidator) Validate(ctx *Context) bool {
-	files, ok := ctx.Value.([]fsutil.File)
-	return ok && uint(len(files)) == v.Count
-}
+func (v *FileCountValidator) Validate(ctx *Context) bool { _ = "STUB: not implemented"; return false }
 
 // Name returns the string name of the validator.
-func (v *FileCountValidator) Name() string { return "file_count" }
+func (v *FileCountValidator) Name() string {
+	_ = "STUB: not implemented"
 
-// MessagePlaceholders returns the ":value" placeholder.
+	// MessagePlaceholders returns the ":value" placeholder.
+	return ""
+}
+
 func (v *FileCountValidator) MessagePlaceholders(_ *Context) []string {
-	return []string{
-		":value", strconv.FormatUint(uint64(v.Count), 10),
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // FileCount the field under validation must be a multi-files
 // with exactly the specified number of files.
-func FileCount(count uint) *FileCountValidator {
-	return &FileCountValidator{Count: count}
-}
+func FileCount(count uint) *FileCountValidator { _ = "STUB: not implemented"; return nil }
 
 //------------------------------
 
@@ -71,25 +66,22 @@ type MinFileCountValidator struct {
 
 // Validate checks the field under validation satisfies this validator's criteria.
 func (v *MinFileCountValidator) Validate(ctx *Context) bool {
-	files, ok := ctx.Value.([]fsutil.File)
-	return ok && uint(len(files)) >= v.Min
+	_ = "STUB: not implemented"
+	return false
 }
 
 // Name returns the string name of the validator.
-func (v *MinFileCountValidator) Name() string { return "min_file_count" }
+func (v *MinFileCountValidator) Name() string { _ = "STUB: not implemented"; return "" }
 
 // MessagePlaceholders returns the ":min" placeholder.
 func (v *MinFileCountValidator) MessagePlaceholders(_ *Context) []string {
-	return []string{
-		":min", strconv.FormatUint(uint64(v.Min), 10),
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // MinFileCount the field under validation must be a multi-files
 // with at least the specified number of files.
-func MinFileCount(min uint) *MinFileCountValidator {
-	return &MinFileCountValidator{Min: min}
-}
+func MinFileCount(min uint) *MinFileCountValidator { _ = "STUB: not implemented"; return nil }
 
 //------------------------------
 
@@ -102,25 +94,22 @@ type MaxFileCountValidator struct {
 
 // Validate checks the field under validation satisfies this validator's criteria.
 func (v *MaxFileCountValidator) Validate(ctx *Context) bool {
-	files, ok := ctx.Value.([]fsutil.File)
-	return ok && uint(len(files)) <= v.Max
+	_ = "STUB: not implemented"
+	return false
 }
 
 // Name returns the string name of the validator.
-func (v *MaxFileCountValidator) Name() string { return "max_file_count" }
+func (v *MaxFileCountValidator) Name() string { _ = "STUB: not implemented"; return "" }
 
 // MessagePlaceholders returns the ":max" placeholder.
 func (v *MaxFileCountValidator) MessagePlaceholders(_ *Context) []string {
-	return []string{
-		":max", strconv.FormatUint(uint64(v.Max), 10),
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // MaxFileCount the field under validation must be a multi-files
 // with at most the specified number of files.
-func MaxFileCount(max uint) *MaxFileCountValidator {
-	return &MaxFileCountValidator{Max: max}
-}
+func MaxFileCount(max uint) *MaxFileCountValidator { _ = "STUB: not implemented"; return nil }
 
 //------------------------------
 
@@ -134,23 +123,22 @@ type FileCountBetweenValidator struct {
 
 // Validate checks the field under validation satisfies this validator's criteria.
 func (v *FileCountBetweenValidator) Validate(ctx *Context) bool {
-	files, ok := ctx.Value.([]fsutil.File)
-	return ok && uint(len(files)) >= v.Min && uint(len(files)) <= v.Max
+	_ = "STUB: not implemented"
+	return false
 }
 
 // Name returns the string name of the validator.
-func (v *FileCountBetweenValidator) Name() string { return "file_count_between" }
+func (v *FileCountBetweenValidator) Name() string { _ = "STUB: not implemented"; return "" }
 
 // MessagePlaceholders returns the ":min" and ":max" placeholders.
 func (v *FileCountBetweenValidator) MessagePlaceholders(_ *Context) []string {
-	return []string{
-		":min", strconv.FormatUint(uint64(v.Min), 10),
-		":max", strconv.FormatUint(uint64(v.Max), 10),
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // FileCountBetween the field under validation must be a multi-files
 // with a number of files between the specified min and max.
 func FileCountBetween(min, max uint) *FileCountBetweenValidator {
-	return &FileCountBetweenValidator{Min: min, Max: max}
+	_ = "STUB: not implemented"
+	return nil
 }

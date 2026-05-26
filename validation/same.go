@@ -1,10 +1,6 @@
 package validation
 
 import (
-	"fmt"
-	"reflect"
-
-	"goyave.dev/goyave/v5/util/errors"
 	"goyave.dev/goyave/v5/util/walk"
 )
 
@@ -19,53 +15,21 @@ type SameValidator struct {
 }
 
 // Validate checks the field under validation satisfies this validator's criteria.
-func (v *SameValidator) Validate(ctx *Context) bool {
-	fieldType := GetFieldType(ctx.Value)
-	ok := true
+func (v *SameValidator) Validate(ctx *Context) bool { _ = "STUB: not implemented"; return false }
 
-	if fieldType == FieldTypeUnsupported {
-		// We cannot validate this field
-		return false
-	}
-
-	v.Path.Walk(ctx.Data, func(c *walk.Context) {
-		lastParent := c.Path.LastParent()
-		if lastParent != nil && lastParent.Type == walk.PathTypeArray && c.Found == walk.ElementNotFound {
-			return
-		}
-
-		if c.Found != walk.Found {
-			ok = false
-			c.Break()
-			return
-		}
-
-		switch fieldType {
-		case FieldTypeString:
-			str, okStr := c.Value.(string)
-			ok = okStr && ctx.Value.(string) == str
-		case FieldTypeBool:
-			b, okBool := c.Value.(bool)
-			ok = okBool && ctx.Value.(bool) == b
-		case FieldTypeArray, FieldTypeObject, FieldTypeNumeric:
-			ok = reflect.DeepEqual(ctx.Value, c.Value)
-		}
-
-		if !ok {
-			c.Break()
-		}
-	})
-	return ok
-}
+// We cannot validate this field
 
 // Name returns the string name of the validator.
-func (v *SameValidator) Name() string { return "same" }
+func (v *SameValidator) Name() string {
+	_ = "STUB: not implemented"
 
-// MessagePlaceholders returns the ":other" placeholder.
+	// MessagePlaceholders returns the ":other" placeholder.
+	return ""
+}
+
 func (v *SameValidator) MessagePlaceholders(_ *Context) []string {
-	return []string{
-		":other", GetFieldName(v.Lang(), v.Path),
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Same validates the field under validation is strictly equal to the field identified
@@ -74,10 +38,4 @@ func (v *SameValidator) MessagePlaceholders(_ *Context) []string {
 // For arrays, objects and numbers, the values are compared using `reflect.DeepEqual()`.
 // For numbers, make sure the two compared numbers have the same type. A `uint` with value `1` will be considered
 // different from an `int` with value `1`.
-func Same(path string) *SameValidator {
-	p, err := walk.Parse(path)
-	if err != nil {
-		panic(errors.NewSkip(fmt.Errorf("validation.Same: path parse error: %w", err), 3))
-	}
-	return &SameValidator{Path: p}
-}
+func Same(path string) *SameValidator { _ = "STUB: not implemented"; return nil }

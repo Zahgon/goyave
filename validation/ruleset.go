@@ -1,15 +1,5 @@
 package validation
 
-import (
-	"strings"
-
-	"slices"
-
-	"github.com/samber/lo"
-	"goyave.dev/goyave/v5/util/errors"
-	"goyave.dev/goyave/v5/util/walk"
-)
-
 // Ruler adapter interface to make allow both RuleSet and Rules to
 // be used when calling `Validate()`.
 type Ruler interface {
@@ -78,33 +68,39 @@ func (v *BaseValidator) init(options *Options) {
 
 // Init the validator with the resources required by the `Composable` interface.
 func (v *BaseValidator) Init(options *Options) {
-	v.init(options)
+	_ = "STUB: not implemented"
+
+	// IsTypeDependent returns false.
+	return
 }
 
-// IsTypeDependent returns false.
-func (v *BaseValidator) IsTypeDependent() bool { return false }
+func (v *BaseValidator) IsTypeDependent() bool {
+	_ = "STUB: not implemented"
 
-// IsType returns false.
-func (v *BaseValidator) IsType() bool { return false }
-
-// MessagePlaceholders returns an empty slice (no placeholders)
-func (v *BaseValidator) MessagePlaceholders(_ *Context) []string { return []string{} }
-
-func (v *BaseValidator) overrideMessage(langEntry string) {
-	v.messageOverride = langEntry
+	// IsType returns false.
+	return false
 }
 
-func (v *BaseValidator) getMessageOverride() string {
-	return v.messageOverride
+func (v *BaseValidator) IsType() bool {
+	_ = "STUB: not implemented"
+
+	// MessagePlaceholders returns an empty slice (no placeholders)
+	return false
 }
+
+func (v *BaseValidator) MessagePlaceholders(_ *Context) []string {
+	_ = "STUB: not implemented"
+	return nil
+}
+
+func (v *BaseValidator) overrideMessage(langEntry string) { _ = "STUB: not implemented"; return }
+
+func (v *BaseValidator) getMessageOverride() string { _ = "STUB: not implemented"; return "" }
 
 // WithMessage set a custom language entry for the error message of a Validator.
 // Original placeholders returned by the validator are still used to render the message.
 // Type-dependent and "element" suffixes are not added when the message is overridden.
-func WithMessage[V Validator](v V, langEntry string) V {
-	v.overrideMessage(langEntry)
-	return v
-}
+func WithMessage[V Validator](v V, langEntry string) V { _ = "STUB: not implemented"; return *new(V) }
 
 // FieldRulesConverter types implementing this interface define their behavior
 // when converting a `FieldRules` to `Rules`. This enables rule sets composition.
@@ -117,8 +113,8 @@ type FieldRulesConverter interface {
 type List []Validator
 
 func (l List) convert(path string, field *FieldRules, prefixDepth uint) Rules {
-	f := newField(path, field.Rules.(List), prefixDepth)
-	return Rules{f}
+	_ = "STUB: not implemented"
+	return *new(Rules)
 }
 
 // FieldRules structure associating a path (see `walk.Path`) identifying a field
@@ -133,135 +129,35 @@ type FieldRules struct {
 type RuleSet []*FieldRules
 
 func (r RuleSet) convert(path string, _ *FieldRules, _ uint) Rules {
-	return r.asRulesWithPrefix(path)
+	_ = "STUB: not implemented"
+	return *new(Rules)
 }
 
 // AsRules converts this RuleSet to a Rules structure.
-func (r RuleSet) AsRules() Rules {
-	return r.asRulesWithPrefix("")
-}
+func (r RuleSet) AsRules() Rules { _ = "STUB: not implemented"; return *new(Rules) }
 
 func (r RuleSet) asRulesWithPrefix(prefix string) Rules {
-	pDepth := uint(0)
-	if prefix != "" {
-		pDepth = walk.Depth(prefix)
-	}
-
-	r = r.injectArrayParents()
-
-	rules := make(Rules, 0, len(r))
-	// Keep a map for array fields to easily assign their element field later
-	arrays := make(map[string]*Field, len(r))
-	for _, field := range r {
-		path := prefix
-		if field.Path != CurrentElement {
-			if (strings.HasPrefix(field.Path, "[]") && !strings.HasPrefix(field.Path, `\[]`)) || path == "" {
-				path += field.Path
-			} else {
-				path += "." + field.Path
-			}
-		}
-
-		fields := field.Rules.convert(path, field, pDepth)
-
-		rules = append(rules, fields...)
-		for _, f := range fields {
-			if f.isArray {
-				arrays[f.Path.String()] = f
-			}
-		}
-	}
-
-	rules.checkDuplicates()
-
-	for {
-		arrayElement, index, ok := lo.FindIndexOf(rules, func(f *Field) bool {
-			p := f.Path
-			for range int(pDepth) - 1 {
-				p = lo.Ternary(p.Next == nil, p, p.Next)
-			}
-			relativePath := p.String()
-			return strings.HasSuffix(relativePath, "[]") && !strings.HasSuffix(relativePath, `\[\]`)
-		})
-		if !ok {
-			break
-		}
-
-		parentArrayPath := arrayElement.Path.Clone()
-		lastParent := parentArrayPath.LastParent()
-		lastParent.Type = walk.PathTypeElement
-		lastParent.Next = nil
-
-		parentArrayPathStr := parentArrayPath.String()
-		parentArrayElement, parentFound := arrays[parentArrayPathStr]
-
-		rules = slices.Delete(rules, index, index+1)
-		if parentFound { // Should never be false because we injected array parents and there are no duplicates.
-			arrayElement.Path = &walk.Path{Type: walk.PathTypeArray, Next: &walk.Path{}}
-			parentArrayElement.Elements = arrayElement
-		}
-	}
-	return rules
+	_ = "STUB: not implemented"
+	return *new(Rules)
 }
+
+// Keep a map for array fields to easily assign their element field later
+
+// Should never be false because we injected array parents and there are no duplicates.
 
 // injectArrayParents makes sure all array elements in the RuleSet have a parent field.
-func (r RuleSet) injectArrayParents() RuleSet {
-	keys := make(map[string]struct{}, len(r))
-	for _, f := range r {
-		keys[f.Path] = struct{}{}
-	}
-	for i := 0; i < len(r); i++ {
-		// len(r) MUST be re-evaluated each loop, using "range r" would break it
-		// because the length is only evaluated once at the start of the loop.
-		f := r[i]
-		if strings.HasSuffix(f.Path, "[]") && !strings.HasSuffix(f.Path, `\[]`) {
-			parentPath := f.Path[:len(f.Path)-2]
-			if _, ok := keys[parentPath]; !ok {
-				// No parent array found, inject it
-				parent := &FieldRules{
-					Path:  parentPath,
-					Rules: List{Array()},
-				}
-				r = append(r[:i+1], append(RuleSet{parent}, r[i+1:]...)...)
-			}
-		}
-	}
+func (r RuleSet) injectArrayParents() RuleSet { _ = "STUB: not implemented"; return *new(RuleSet) }
 
-	return r
-}
+// len(r) MUST be re-evaluated each loop, using "range r" would break it
+// because the length is only evaluated once at the start of the loop.
 
-func (r Rules) checkDuplicates() {
-	paths := make(map[string]struct{}, len(r))
-	wildcardPaths := make(map[string]struct{}, len(r))
-	for _, f := range r {
-		path := f.Path.String()
-		includeElementsKeys(paths, path, f.Elements)
-		if _, exists := paths[path]; exists {
-			panic(errors.Errorf("validation.RuleSet: duplicate path \"%s\" in rule set", path))
-		}
-		var parentPath string
-		depth := f.Path.Depth()
-		if depth == 1 {
-			parentPath = CurrentElement
-		} else {
-			parentPath = f.Path.Truncate(depth - 1).String()
-		}
-		if f.Path.Tail().IsWildcard() {
-			wildcardPaths[parentPath] = struct{}{}
-		} else if _, exists := wildcardPaths[parentPath]; exists {
-			panic(errors.Errorf("validation.RuleSet: cannot validate an object property with both the wildcard (*) and specific property paths (at \"%s\")", path))
-		}
-		paths[path] = struct{}{}
-	}
-}
+// No parent array found, inject it
+
+func (r Rules) checkDuplicates() { _ = "STUB: not implemented"; return }
 
 func includeElementsKeys(paths map[string]struct{}, path string, elementField *Field) {
-	if elementField == nil {
-		return
-	}
-	elementPath := path + "[]"
-	paths[elementPath] = struct{}{}
-	includeElementsKeys(paths, elementPath, elementField.Elements)
+	_ = "STUB: not implemented"
+	return
 }
 
 // Rules is the result of the transformation of RuleSet using `AsRules()`.
@@ -269,6 +165,4 @@ func includeElementsKeys(paths map[string]struct{}, path string, elementField *F
 type Rules []*Field
 
 // AsRules returns itself.
-func (r Rules) AsRules() Rules {
-	return r
-}
+func (r Rules) AsRules() Rules { _ = "STUB: not implemented"; return *new(Rules) }

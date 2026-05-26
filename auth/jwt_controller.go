@@ -1,18 +1,8 @@
 package auth
 
 import (
-	"errors"
-	"net/http"
-	"reflect"
-
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/samber/lo"
-	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 	"goyave.dev/goyave/v5"
-	"goyave.dev/goyave/v5/middleware/parse"
-	errorutil "goyave.dev/goyave/v5/util/errors"
-	"goyave.dev/goyave/v5/util/fsutil/osfs"
 	"goyave.dev/goyave/v5/validation"
 )
 
@@ -58,45 +48,20 @@ type JWTController[T any] struct { // TODO refresh token
 // The `passwordField` corresponds to the name of T's struct field that holds the user's hashed password.
 // It will be used to compare the password hash with the user input.
 func NewJWTController[T any](userService UserService[T], passwordField string) *JWTController[T] {
-	return &JWTController[T]{
-		UserService:   userService,
-		PasswordField: passwordField,
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Init the controller. Automatically registers the `JWTService` if not already registered,
 // using `osfs.FS` as file system for the signing keys.
-func (c *JWTController[T]) Init(server *goyave.Server) {
-	c.Component.Init(server)
-
-	service, ok := server.LookupService(JWTServiceName)
-	if !ok {
-		service = NewJWTService(server.Config(), &osfs.FS{})
-		server.RegisterService(service)
-	}
-	c.jwtService = service.(*JWTService)
-}
+func (c *JWTController[T]) Init(server *goyave.Server) { _ = "STUB: not implemented"; return }
 
 // RegisterRoutes register the "/login" route (with validation) on the given router.
-func (c *JWTController[T]) RegisterRoutes(router *goyave.Router) {
-	router.Post("/login", c.Login).SetMeta(MetaAuth, false).Middleware(&parse.Middleware{}).ValidateBody(c.validationRules)
-}
+func (c *JWTController[T]) RegisterRoutes(router *goyave.Router) { _ = "STUB: not implemented"; return }
 
 func (c *JWTController[T]) validationRules(_ *goyave.Request) validation.RuleSet {
-	return validation.RuleSet{
-		{Path: validation.CurrentElement, Rules: validation.List{
-			validation.Required(),
-			validation.Object(),
-		}},
-		{Path: lo.Ternary(c.UsernameRequestField == "", "username", c.UsernameRequestField), Rules: validation.List{
-			validation.Required(),
-			validation.String(),
-		}},
-		{Path: lo.Ternary(c.PasswordRequestField == "", "password", c.PasswordRequestField), Rules: validation.List{
-			validation.Required(),
-			validation.String(),
-		}},
-	}
+	_ = "STUB: not implemented"
+	return *new(validation.RuleSet)
 }
 
 // Login POST handler for token-based authentication.
@@ -104,53 +69,11 @@ func (c *JWTController[T]) validationRules(_ *goyave.Request) validation.RuleSet
 // defined in the controller and returns it as a response.
 // The password is checked using bcrypt.
 func (c *JWTController[T]) Login(response *goyave.Response, request *goyave.Request) {
-	body := request.Data.(map[string]any)
-	username := body[lo.Ternary(c.UsernameRequestField == "", "username", c.UsernameRequestField)].(string)
-	password := body[lo.Ternary(c.PasswordRequestField == "", "password", c.PasswordRequestField)].(string)
-
-	user, err := c.UserService.FindByUsername(request.Context(), username)
-
-	notFound := errors.Is(err, gorm.ErrRecordNotFound)
-	if err != nil && !notFound {
-		response.Error(errorutil.New(err))
-		return
-	}
-
-	if notFound {
-		response.JSON(http.StatusUnauthorized, map[string]string{"error": request.Lang.Get("auth.invalid-credentials")})
-		return
-	}
-
-	t := reflect.Indirect(reflect.ValueOf(user))
-	for t.Kind() == reflect.Ptr {
-		t = t.Elem()
-	}
-	pass := t.FieldByName(c.PasswordField)
-	if pass.Kind() == reflect.Invalid {
-		response.Error(errorutil.Errorf("Could not find valid field/column %q in type %T", c.PasswordField, user))
-		return
-	}
-
-	if bcrypt.CompareHashAndPassword([]byte(pass.String()), []byte(password)) == nil {
-		tokenFunc := lo.Ternary(c.TokenFunc == nil, c.defaultTokenFunc, c.TokenFunc)
-		token, err := tokenFunc(request, user)
-		if err != nil {
-			response.Error(errorutil.New(err))
-			return
-		}
-		response.JSON(http.StatusOK, map[string]string{"token": token})
-		return
-	}
-
-	response.JSON(http.StatusUnauthorized, map[string]string{"error": request.Lang.Get("auth.invalid-credentials")})
+	_ = "STUB: not implemented"
+	return
 }
 
 func (c *JWTController[T]) defaultTokenFunc(r *goyave.Request, _ *T) (string, error) {
-	signingMethod := c.SigningMethod
-	if signingMethod == nil {
-		signingMethod = jwt.SigningMethodHS256
-	}
-	body := r.Data.(map[string]any)
-	usernameField := lo.Ternary(c.UsernameRequestField == "", "username", c.UsernameRequestField)
-	return c.jwtService.GenerateTokenWithClaims(jwt.MapClaims{"sub": body[usernameField]}, signingMethod)
+	_ = "STUB: not implemented"
+	return "", nil
 }

@@ -33,27 +33,7 @@ type ArrayErrors map[int]*Errors
 // if the first step in the path is of type `walk.PathTypeObject`, it will be
 // considered as the root element and skipped. This allows this implementation
 // to know the root element is an object and create the `FieldsErrors` accordingly.
-func (e *Errors) Add(path *walk.Path, message string) {
-	switch path.Type {
-	case walk.PathTypeElement:
-		e.Errors = append(e.Errors, message)
-	case walk.PathTypeArray:
-		if e.Elements == nil {
-			e.Elements = make(map[int]*Errors)
-		}
-
-		index := -1
-		if path.Index != nil {
-			index = *path.Index
-		}
-		e.Elements.Add(path.Next, index, message)
-	case walk.PathTypeObject:
-		if e.Fields == nil {
-			e.Fields = make(FieldsErrors)
-		}
-		e.Fields.Add(path.Next, message)
-	}
-}
+func (e *Errors) Add(path *walk.Path, message string) { _ = "STUB: not implemented"; return }
 
 // Merge the given errors into this bag of errors at the given path.
 // This can be used when a validator uses nested validation and wants
@@ -62,87 +42,25 @@ func (e *Errors) Add(path *walk.Path, message string) {
 // Missing path segments will be added automatically.
 // Elements from the given errors are NOT cloned. Therefore there can
 // be side-effects if you modify them after the call of `Merge`.
-func (e *Errors) Merge(path *walk.Path, errors *Errors) {
-	switch path.Type {
-	case walk.PathTypeElement:
-		if len(errors.Fields) > 0 && e.Fields == nil {
-			e.Fields = make(FieldsErrors, len(errors.Fields))
-		}
-		for k, v := range errors.Fields {
-			if fields, ok := e.Fields[k]; ok {
-				fields.Merge(path, v)
-			} else {
-				e.Fields[k] = v
-			}
-		}
-		if len(errors.Elements) > 0 && e.Elements == nil {
-			e.Elements = make(ArrayErrors, len(errors.Elements))
-		}
-		for i, v := range errors.Elements {
-			if elements, ok := e.Elements[i]; ok {
-				elements.Merge(path, v)
-			} else {
-				e.Elements[i] = v
-			}
-		}
-		e.Errors = append(e.Errors, errors.Errors...)
-	case walk.PathTypeArray:
-		if e.Elements == nil {
-			e.Elements = make(ArrayErrors)
-		}
-
-		index := -1
-		if path.Index != nil {
-			index = *path.Index
-		}
-		e.Elements.Merge(path.Next, index, errors)
-	case walk.PathTypeObject:
-		if e.Fields == nil {
-			e.Fields = make(FieldsErrors)
-		}
-		e.Fields.Merge(path.Next, errors)
-	}
-}
+func (e *Errors) Merge(path *walk.Path, errors *Errors) { _ = "STUB: not implemented"; return }
 
 // Add an error message to the element identified by the given path.
 // Creates all missing elements in the path.
-func (e FieldsErrors) Add(path *walk.Path, message string) {
-	errs, ok := e[*path.Name]
-	if !ok {
-		errs = &Errors{}
-		e[*path.Name] = errs
-	}
-	errs.Add(path, message)
-}
+func (e FieldsErrors) Add(path *walk.Path, message string) { _ = "STUB: not implemented"; return }
 
 // Merge the given errors into this bag of errors at the given path.
-func (e FieldsErrors) Merge(path *walk.Path, errors *Errors) {
-	errs, ok := e[*path.Name]
-	if !ok {
-		errs = &Errors{}
-		e[*path.Name] = errs
-	}
-	errs.Merge(path, errors)
-}
+func (e FieldsErrors) Merge(path *walk.Path, errors *Errors) { _ = "STUB: not implemented"; return }
 
 // Add an error message to the element identified by the given path in the array,
 // at the given index. "-1" index is accepted to identify non-existing elements.
 // Creates all missing elements in the path.
 func (e ArrayErrors) Add(path *walk.Path, index int, message string) {
-	errs, ok := e[index]
-	if !ok {
-		errs = &Errors{}
-		e[index] = errs
-	}
-	errs.Add(path, message)
+	_ = "STUB: not implemented"
+	return
 }
 
 // Merge the given errors into this bag of errors at the given path.
 func (e ArrayErrors) Merge(path *walk.Path, index int, errors *Errors) {
-	errs, ok := e[index]
-	if !ok {
-		errs = &Errors{}
-		e[index] = errs
-	}
-	errs.Merge(path, errors)
+	_ = "STUB: not implemented"
+	return
 }

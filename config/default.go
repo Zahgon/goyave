@@ -51,26 +51,4 @@ var configDefaults = object{
 	},
 }
 
-func loadDefaults(src object, dst object) {
-	for k, v := range src {
-		if obj, ok := v.(object); ok {
-			sub := make(object, len(obj))
-			loadDefaults(obj, sub)
-			dst[k] = sub
-		} else {
-			entry := v.(*Entry)
-			value := entry.Value
-			t := reflect.TypeOf(value)
-			if t != nil && t.Kind() == reflect.Slice {
-				list := reflect.ValueOf(value)
-				length := list.Len()
-				slice := reflect.MakeSlice(reflect.SliceOf(t.Elem()), 0, length)
-				for i := range length {
-					slice = reflect.Append(slice, list.Index(i))
-				}
-				value = slice.Interface()
-			}
-			dst[k] = &Entry{value, entry.AuthorizedValues, entry.Type, entry.IsSlice, entry.Required}
-		}
-	}
-}
+func loadDefaults(src object, dst object) { _ = "STUB: not implemented"; return }

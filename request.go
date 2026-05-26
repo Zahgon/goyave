@@ -6,7 +6,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"strings"
 	"sync"
 	"time"
 
@@ -80,45 +79,22 @@ var requestPool = sync.Pool{
 
 // NewRequest create a new Request from the given raw http request.
 // Initializes Now with the current time and Extra with a non-nil map.
-func NewRequest(httpRequest *http.Request) *Request {
-	req := requestPool.Get().(*Request)
-	req.reset(httpRequest)
-	return req
-}
+func NewRequest(httpRequest *http.Request) *Request { _ = "STUB: not implemented"; return nil }
 
-func (r *Request) reset(httpRequest *http.Request) {
-	r.httpRequest = httpRequest
-	r.Now = time.Now()
-	r.Extra = map[any]any{}
-	r.cookies = nil
-	r.Data = nil
-	r.Lang = nil
-	r.Query = nil
-	r.Route = nil
-	r.RouteParams = nil
-	r.User = nil
-}
+func (r *Request) reset(httpRequest *http.Request) { _ = "STUB: not implemented"; return }
 
 // Request return the raw http request.
 // Prefer using the "goyave.Request" accessors.
-func (r *Request) Request() *http.Request {
-	return r.httpRequest
-}
+func (r *Request) Request() *http.Request { _ = "STUB: not implemented"; return nil }
 
 // Method specifies the HTTP method (GET, POST, PUT, etc.).
-func (r *Request) Method() string {
-	return r.httpRequest.Method
-}
+func (r *Request) Method() string { _ = "STUB: not implemented"; return "" }
 
 // Protocol the protocol used by this request, "HTTP/1.1" for example.
-func (r *Request) Protocol() string {
-	return r.httpRequest.Proto
-}
+func (r *Request) Protocol() string { _ = "STUB: not implemented"; return "" }
 
 // URL specifies the URL being requested.
-func (r *Request) URL() *url.URL {
-	return r.httpRequest.URL
-}
+func (r *Request) URL() *url.URL { _ = "STUB: not implemented"; return nil }
 
 // Header contains the request header fields either received
 // by the server or to be sent by the client.
@@ -139,80 +115,61 @@ func (r *Request) URL() *url.URL {
 //		"Accept-Language": {"en-us"},
 //		"Foo": {"Bar", "two"},
 //	}
-func (r *Request) Header() http.Header {
-	return r.httpRequest.Header
-}
+func (r *Request) Header() http.Header { _ = "STUB: not implemented"; return *new(http.Header) }
 
 // ContentLength records the length of the associated content.
 // The value -1 indicates that the length is unknown.
-func (r *Request) ContentLength() int64 {
-	return r.httpRequest.ContentLength
-}
+func (r *Request) ContentLength() int64 { _ = "STUB: not implemented"; return 0 }
 
 // RemoteAddress allows to record the network address that
 // sent the request, usually for logging.
-func (r *Request) RemoteAddress() string {
-	return r.httpRequest.RemoteAddr
-}
+func (r *Request) RemoteAddress() string { _ = "STUB: not implemented"; return "" }
 
 // Cookies returns the HTTP cookies sent with the request.
-func (r *Request) Cookies() []*http.Cookie {
-	if r.cookies == nil {
-		r.cookies = r.httpRequest.Cookies()
-	}
-	return r.cookies
-}
+func (r *Request) Cookies() []*http.Cookie { _ = "STUB: not implemented"; return nil }
 
 // Referrer returns the referring URL, if sent in the request.
-func (r *Request) Referrer() string {
-	return r.httpRequest.Referer()
-}
+func (r *Request) Referrer() string { _ = "STUB: not implemented"; return "" }
 
 // UserAgent returns the client's User-Agent, if sent in the request.
-func (r *Request) UserAgent() string {
-	return r.httpRequest.UserAgent()
-}
+func (r *Request) UserAgent() string { _ = "STUB: not implemented"; return "" }
 
 // BasicAuth returns the username and password provided in the request's
 // Authorization header, if the request uses HTTP Basic Authentication.
 func (r *Request) BasicAuth() (username, password string, ok bool) {
-	return r.httpRequest.BasicAuth()
+	_ = "STUB: not implemented"
+	return "", "", false
+
+	// BearerToken extract the auth token from the "Authorization" header.
+	// Only takes tokens of type "Bearer".
+	// Returns empty string if no token found or the header is invalid.
 }
 
-// BearerToken extract the auth token from the "Authorization" header.
-// Only takes tokens of type "Bearer".
-// Returns empty string if no token found or the header is invalid.
-func (r *Request) BearerToken() (string, bool) {
-	const schema = "Bearer "
-	header := r.Header().Get("Authorization")
-	if !strings.HasPrefix(header, schema) {
-		return "", false
-	}
-	return strings.TrimSpace(header[len(schema):]), true
-}
+func (r *Request) BearerToken() (string, bool) { _ = "STUB: not implemented"; return "", false }
 
 // Body the request body.
 // Always non-nil, but will return EOF immediately when no body is present.
 // The server will close the request body so handlers don't need to.
 func (r *Request) Body() io.ReadCloser {
-	return r.httpRequest.Body
+	_ = "STUB: not implemented"
+	return *
+
+	// Context returns the request's context. To change the context, use `WithContext`.
+	//
+	// The returned context is always non-nil; it defaults to the
+	// background context.
+	//
+	// The context is canceled when the client's connection closes, the request is canceled (with HTTP/2),
+	// or when the `ServeHTTP` method returns (after the finalization step of the request lifecycle).
+	new(io.ReadCloser)
 }
 
-// Context returns the request's context. To change the context, use `WithContext`.
-//
-// The returned context is always non-nil; it defaults to the
-// background context.
-//
-// The context is canceled when the client's connection closes, the request is canceled (with HTTP/2),
-// or when the `ServeHTTP` method returns (after the finalization step of the request lifecycle).
 func (r *Request) Context() context.Context {
-	return r.httpRequest.Context()
+	_ = "STUB: not implemented"
+	return *new(context.Context)
 }
 
 // WithContext creates a shallow copy of the underlying `*http.Request` with
 // its context changed to `ctx` then returns itself.
 // The provided ctx must be non-nil.
-func (r *Request) WithContext(ctx context.Context) *Request {
-	r.httpRequest = r.httpRequest.WithContext(ctx)
-	return r
-}
+func (r *Request) WithContext(ctx context.Context) *Request { _ = "STUB: not implemented"; return nil }

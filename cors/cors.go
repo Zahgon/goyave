@@ -2,11 +2,7 @@ package cors
 
 import (
 	"net/http"
-	"strconv"
-	"strings"
 	"time"
-
-	"slices"
 )
 
 // Options holds the CORS configuration for a router.
@@ -47,81 +43,41 @@ type Options struct {
 // Default create new CORS options with default settings.
 // The returned value can be used as a starting point for
 // customized options.
-func Default() *Options {
-	return &Options{
-		AllowedOrigins: []string{"*"},
-		AllowedMethods: []string{
-			http.MethodHead,
-			http.MethodGet,
-			http.MethodPost,
-			http.MethodPut,
-			http.MethodPatch,
-			http.MethodDelete,
-		},
-		AllowedHeaders:   []string{"Origin", "Accept", "Content-Type", "X-Requested-With", "Authorization"},
-		AllowCredentials: false,
-		MaxAge:           time.Hour * 12,
-	}
-}
+func Default() *Options { _ = "STUB: not implemented"; return nil }
 
 // ConfigureCommon configures common headers between regular and preflight requests:
 // Origin, Credentials and Exposed Headers.
 func (o *Options) ConfigureCommon(headers http.Header, requestHeaders http.Header) {
-	o.configureOrigin(headers, requestHeaders)
-	o.configureCredentials(headers)
-	o.configureExposedHeaders(headers)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (o *Options) configureOrigin(headers http.Header, requestHeaders http.Header) {
-	if len(o.AllowedOrigins) == 0 || o.AllowedOrigins[0] == "*" {
-		headers.Set("Access-Control-Allow-Origin", "*")
-	} else {
-		if o.validateOrigin(requestHeaders) {
-			headers.Set("Access-Control-Allow-Origin", requestHeaders.Get("Origin"))
-		}
-		headers.Add("Vary", "Origin")
-	}
+	_ = "STUB: not implemented"
+	return
 }
 
-func (o *Options) configureCredentials(headers http.Header) {
-	if o.AllowCredentials {
-		headers.Set("Access-Control-Allow-Credentials", "true")
-	}
-}
+func (o *Options) configureCredentials(headers http.Header) { _ = "STUB: not implemented"; return }
 
-func (o *Options) configureExposedHeaders(headers http.Header) {
-	if len(o.ExposedHeaders) > 0 {
-		headers.Set("Access-Control-Expose-Headers", strings.Join(o.ExposedHeaders, ", "))
-	}
-}
+func (o *Options) configureExposedHeaders(headers http.Header) { _ = "STUB: not implemented"; return }
 
-func (o *Options) configureAllowedMethods(headers http.Header) {
-	headers.Set("Access-Control-Allow-Methods", strings.Join(o.AllowedMethods, ", "))
-}
+func (o *Options) configureAllowedMethods(headers http.Header) { _ = "STUB: not implemented"; return }
 
 func (o *Options) configureAllowedHeaders(headers http.Header, requestHeaders http.Header) {
-	if len(o.AllowedHeaders) == 0 {
-		headers.Add("Vary", "Access-Control-Request-Headers")
-		headers.Set("Access-Control-Allow-Headers", requestHeaders.Get("Access-Control-Request-Headers"))
-	} else {
-		headers.Set("Access-Control-Allow-Headers", strings.Join(o.AllowedHeaders, ", "))
-	}
+	_ = "STUB: not implemented"
+	return
 }
 
-func (o *Options) configureMaxAge(headers http.Header) {
-	headers.Set("Access-Control-Max-Age", strconv.FormatUint(uint64(o.MaxAge.Seconds()), 10))
-}
+func (o *Options) configureMaxAge(headers http.Header) { _ = "STUB: not implemented"; return }
 
 // HandlePreflight configures headers for preflight requests:
 // Allowed Methods, Allowed Headers and Max Age.
 func (o *Options) HandlePreflight(headers http.Header, requestHeaders http.Header) {
-	o.configureAllowedMethods(headers)
-	o.configureAllowedHeaders(headers, requestHeaders)
-	o.configureMaxAge(headers)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (o *Options) validateOrigin(requestHeaders http.Header) bool {
-	return len(o.AllowedOrigins) == 0 ||
-		o.AllowedOrigins[0] == "*" ||
-		slices.Contains(o.AllowedOrigins, requestHeaders.Get("Origin"))
+	_ = "STUB: not implemented"
+	return false
 }

@@ -1,44 +1,31 @@
 package validation
 
-import "net"
-
 // IPValidator the field under validation must be a string representing
 // a valid IPv4 or IPv6.
 // If validation passes, the value is converted to `net.IP`.
 type IPValidator struct{ BaseValidator }
 
 // Validate checks the field under validation satisfies this validator's criteria.
-func (v *IPValidator) Validate(ctx *Context) bool {
-	if _, ok := ctx.Value.(net.IP); ok {
-		return true
-	}
-
-	val, ok := ctx.Value.(string)
-	if !ok {
-		return false
-	}
-
-	ip := net.ParseIP(val)
-	if ip == nil {
-		return false
-	}
-
-	ctx.Value = ip
-	return true
-}
+func (v *IPValidator) Validate(ctx *Context) bool { _ = "STUB: not implemented"; return false }
 
 // Name returns the string name of the validator.
-func (v *IPValidator) Name() string { return "ip" }
+func (v *IPValidator) Name() string {
+	_ = "STUB: not implemented"
 
-// IsType returns true.
-func (v *IPValidator) IsType() bool { return true }
-
-// IP the field under validation must be a string representing
-// a valid IPv4 or IPv6.
-// If validation passes, the value is converted to `net.IP`.
-func IP() *IPValidator {
-	return &IPValidator{}
+	// IsType returns true.
+	return ""
 }
+
+func (v *IPValidator) IsType() bool {
+	_ = "STUB: not implemented"
+
+	// IP the field under validation must be a string representing
+	// a valid IPv4 or IPv6.
+	// If validation passes, the value is converted to `net.IP`.
+	return false
+}
+
+func IP() *IPValidator { _ = "STUB: not implemented"; return nil }
 
 //------------------------------
 
@@ -48,21 +35,18 @@ func IP() *IPValidator {
 type IPv4Validator struct{ IPValidator }
 
 // Validate checks the field under validation satisfies this validator's criteria.
-func (v *IPv4Validator) Validate(ctx *Context) bool {
-	if !v.IPValidator.Validate(ctx) {
-		return false
-	}
-	return ctx.Value.(net.IP).To4() != nil
-}
+func (v *IPv4Validator) Validate(ctx *Context) bool { _ = "STUB: not implemented"; return false }
 
 // Name returns the string name of the validator.
-func (v *IPv4Validator) Name() string { return "ipv4" }
+func (v *IPv4Validator) Name() string {
+	_ = "STUB: not implemented"
 
-// IPv4 the field under validation must be a string representing a valid IPv4.
-// If validation passes, the value is converted to `net.IP`.
-func IPv4() *IPv4Validator {
-	return &IPv4Validator{}
+	// IPv4 the field under validation must be a string representing a valid IPv4.
+	// If validation passes, the value is converted to `net.IP`.
+	return ""
 }
+
+func IPv4() *IPv4Validator { _ = "STUB: not implemented"; return nil }
 
 //------------------------------
 
@@ -72,18 +56,15 @@ func IPv4() *IPv4Validator {
 type IPv6Validator struct{ IPValidator }
 
 // Validate checks the field under validation satisfies this validator's criteria.
-func (v *IPv6Validator) Validate(ctx *Context) bool {
-	if !v.IPValidator.Validate(ctx) {
-		return false
-	}
-	return ctx.Value.(net.IP).To4() == nil
-}
+func (v *IPv6Validator) Validate(ctx *Context) bool { _ = "STUB: not implemented"; return false }
 
 // Name returns the string name of the validator.
-func (v *IPv6Validator) Name() string { return "ipv6" }
+func (v *IPv6Validator) Name() string {
+	_ = "STUB: not implemented"
 
-// IPv6 the field under validation must be a string representing a valid IPv6.
-// If validation passes, the value is converted to `net.IP`.
-func IPv6() *IPv6Validator {
-	return &IPv6Validator{}
+	// IPv6 the field under validation must be a string representing a valid IPv6.
+	// If validation passes, the value is converted to `net.IP`.
+	return ""
 }
+
+func IPv6() *IPv6Validator { _ = "STUB: not implemented"; return nil }

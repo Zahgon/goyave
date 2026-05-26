@@ -23,32 +23,11 @@ type Field struct {
 	isNullable bool
 }
 
-func alwaysRequired(_ *Context) bool { return true }
+func alwaysRequired(_ *Context) bool { _ = "STUB: not implemented"; return false }
 
 func newField(path string, validators []Validator, prefixDepth uint) *Field {
-	p := walk.MustParse(path)
-	f := &Field{
-		Path:        p,
-		Validators:  validators,
-		prefixDepth: prefixDepth,
-	}
-
-	for _, v := range validators {
-		switch v := v.(type) {
-		case *RequiredValidator:
-			f.isRequired = alwaysRequired
-		case *RequiredIfValidator:
-			f.isRequired = v.Condition
-		case *NullableValidator:
-			f.isNullable = true
-		case *ArrayValidator:
-			f.isArray = true
-		case *ObjectValidator:
-			f.isObject = true
-		}
-	}
-
-	return f
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // getErrorPath returns the path to use when appending the error message to the
@@ -58,41 +37,31 @@ func newField(path string, validators []Validator, prefixDepth uint) *Field {
 // if the parent is an array, otherwise `nil`. If `nil`, returns the unmodified
 // path from the `walk.Context`.
 func (f *Field) getErrorPath(parentPath *walk.Path, c *walk.Context) *walk.Path {
-	if parentPath != nil {
-		clone := parentPath.Clone()
-		tail := clone.Tail()
-		tail.Type = walk.PathTypeArray
-		tail.Index = &c.Index
-		tail.Next = &walk.Path{Type: walk.PathTypeElement}
-		return clone
-	}
-
-	return c.Path
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // IsRequired check if a field has the "required" rule
-func (f *Field) IsRequired(ctx *Context) bool {
-	return f.isRequired != nil && f.isRequired(ctx)
-}
+func (f *Field) IsRequired(ctx *Context) bool { _ = "STUB: not implemented"; return false }
 
 // IsNullable check if a field has the "nullable" rule
-func (f *Field) IsNullable() bool {
-	return f.isNullable
-}
+func (f *Field) IsNullable() bool { _ = "STUB: not implemented"; return false }
 
 // IsArray check if a field has the "array" rule
 func (f *Field) IsArray() bool {
-	return f.isArray
+	_ = "STUB: not implemented"
+
+	// IsObject check if a field has the "object" rule
+	return false
 }
 
-// IsObject check if a field has the "object" rule
 func (f *Field) IsObject() bool {
-	return f.isObject
+	_ = "STUB: not implemented"
+
+	// PrefixDepth When using composition, `prefixDepth` allows to truncate the path to the
+	// validated element in order to retrieve the root object or array relative to
+	// the composed RuleSet.
+	return false
 }
 
-// PrefixDepth When using composition, `prefixDepth` allows to truncate the path to the
-// validated element in order to retrieve the root object or array relative to
-// the composed RuleSet.
-func (f *Field) PrefixDepth() uint {
-	return f.prefixDepth
-}
+func (f *Field) PrefixDepth() uint { _ = "STUB: not implemented"; return 0 }

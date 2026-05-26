@@ -11,9 +11,11 @@ type DigitsValidator struct {
 }
 
 // Name returns the string name of the validator.
-func (v *DigitsValidator) Name() string { return "digits" }
+func (v *DigitsValidator) Name() string {
+	_ = "STUB: not implemented"
 
-// Digits the field under validation must be a string that only contains digits.
-func Digits() *DigitsValidator {
-	return &DigitsValidator{RegexValidator: RegexValidator{Regexp: digitsRegex}}
+	// Digits the field under validation must be a string that only contains digits.
+	return ""
 }
+
+func Digits() *DigitsValidator { _ = "STUB: not implemented"; return nil }

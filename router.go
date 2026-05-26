@@ -5,14 +5,8 @@ import (
 	"io/fs"
 	"net/http"
 	"regexp"
-	"strings"
 
-	"maps"
-	"slices"
-
-	"github.com/samber/lo"
 	"goyave.dev/goyave/v5/cors"
-	errorutil "goyave.dev/goyave/v5/util/errors"
 )
 
 // Common route meta keys.
@@ -56,18 +50,9 @@ type routeMatch struct {
 	currentPath string
 }
 
-func (rm *routeMatch) mergeParams(params map[string]string) {
-	if rm.parameters == nil {
-		rm.parameters = params
-		return
-	}
-	maps.Copy(rm.parameters, params)
-}
+func (rm *routeMatch) mergeParams(params map[string]string) { _ = "STUB: not implemented"; return }
 
-func (rm *routeMatch) trimCurrentPath(fullMatch string) {
-	length := len(fullMatch)
-	rm.currentPath = rm.currentPath[length:]
-}
+func (rm *routeMatch) trimCurrentPath(fullMatch string) { _ = "STUB: not implemented"; return }
 
 // Router registers routes to be matched and executes a handler.
 type Router struct {
@@ -100,90 +85,41 @@ var _ routeMatcher = (*Router)(nil) // implements routeMatcher
 // This method can however be useful for external tooling that build
 // routers without starting the HTTP server. Don't forget to call
 // `router.ClearRegexCache()` when you are done registering routes.
-func NewRouter(server *Server) *Router {
-	router := &Router{
-		server:         server,
-		parent:         nil,
-		prefix:         "",
-		statusHandlers: make(map[int]StatusHandler, 41),
-		namedRoutes:    make(map[string]*Route, 5),
-		middlewareHolder: middlewareHolder{
-			middleware: nil,
-		},
-		globalMiddleware: &middlewareHolder{
-			middleware: make([]Middleware, 0, 2),
-		},
-		regexCache: make(map[string]*regexp.Regexp, 5),
-		Meta:       make(map[string]any),
-	}
-	router.StatusHandler(&PanicStatusHandler{}, http.StatusInternalServerError)
-	for i := http.StatusBadRequest; i <= http.StatusTeapot; i++ {
-		router.StatusHandler(&ErrorStatusHandler{}, i)
-	}
-	router.StatusHandler(&ParseErrorStatusHandler{}, http.StatusBadRequest)
-	router.StatusHandler(&ValidationStatusHandler{}, http.StatusUnprocessableEntity)
-	for i := http.StatusLocked; i <= http.StatusUpgradeRequired; i++ {
-		router.StatusHandler(&ErrorStatusHandler{}, i)
-	}
-	router.StatusHandler(&ErrorStatusHandler{}, http.StatusMisdirectedRequest, http.StatusPreconditionRequired, http.StatusTooManyRequests, http.StatusRequestHeaderFieldsTooLarge, 444, http.StatusUnavailableForLegalReasons) // 444 is a nginx status code. Indicates server to return no information to the client and close the connection immediately
-	for i := http.StatusNotImplemented; i <= http.StatusLoopDetected; i++ {
-		router.StatusHandler(&ErrorStatusHandler{}, i)
-	}
-	router.StatusHandler(&ErrorStatusHandler{}, http.StatusNotExtended, http.StatusNetworkAuthenticationRequired)
-	router.GlobalMiddleware(&recoveryMiddleware{}, &languageMiddleware{})
-	return router
-}
+func NewRouter(server *Server) *Router { _ = "STUB: not implemented"; return nil }
+
+// 444 is a nginx status code. Indicates server to return no information to the client and close the connection immediately
 
 // ClearRegexCache set internal router's regex cache used for route parameters optimisation to nil
 // so it can be garbage collected.
 // You don't need to call this function if you are using `server.RegisterRoutes`.
-func (r *Router) ClearRegexCache() {
-	r.regexCache = nil
-	for _, subrouter := range r.subrouters {
-		subrouter.ClearRegexCache()
-	}
-}
+func (r *Router) ClearRegexCache() { _ = "STUB: not implemented"; return }
 
 // GetParent returns the parent Router of this router (can be `nil`).
 func (r *Router) GetParent() *Router {
-	return r.parent
+	_ = "STUB: not implemented"
+
+	// GetRoutes returns the list of routes belonging to this router.
+	return nil
 }
 
-// GetRoutes returns the list of routes belonging to this router.
-func (r *Router) GetRoutes() []*Route {
-	cpy := make([]*Route, len(r.routes))
-	copy(cpy, r.routes)
-	return cpy
-}
+func (r *Router) GetRoutes() []*Route { _ = "STUB: not implemented"; return nil }
 
 // GetSubrouters returns the list of subrouters belonging to this router.
-func (r *Router) GetSubrouters() []*Router {
-	cpy := make([]*Router, len(r.subrouters))
-	copy(cpy, r.subrouters)
-	return cpy
-}
+func (r *Router) GetSubrouters() []*Router { _ = "STUB: not implemented"; return nil }
 
 // GetRoute get a named route.
 // Returns nil if the route doesn't exist.
-func (r *Router) GetRoute(name string) *Route {
-	return r.namedRoutes[name]
-}
+func (r *Router) GetRoute(name string) *Route { _ = "STUB: not implemented"; return nil }
 
 // SetMeta attach a value to this router identified by the given key.
 //
 // This value is inherited by all subrouters and routes, unless they override
 // it at their level.
-func (r *Router) SetMeta(key string, value any) *Router {
-	r.Meta[key] = value
-	return r
-}
+func (r *Router) SetMeta(key string, value any) *Router { _ = "STUB: not implemented"; return nil }
 
 // RemoveMeta detach the meta value identified by the given key from this router.
 // This doesn't remove meta using the same key from the parent routers.
-func (r *Router) RemoveMeta(key string) *Router {
-	delete(r.Meta, key)
-	return r
-}
+func (r *Router) RemoveMeta(key string) *Router { _ = "STUB: not implemented"; return nil }
 
 // LookupMeta value identified by the given key. If not found in this router,
 // the value is recursively fetched in the parent routers.
@@ -191,14 +127,8 @@ func (r *Router) RemoveMeta(key string) *Router {
 // Returns the value and `true` if found in the current router or one of the
 // parent routers, `nil` and `false` otherwise.
 func (r *Router) LookupMeta(key string) (any, bool) {
-	val, ok := r.Meta[key]
-	if ok {
-		return val, ok
-	}
-	if r.parent != nil {
-		return r.parent.LookupMeta(key)
-	}
-	return nil, false
+	_ = "STUB: not implemented"
+	return *new(any), false
 }
 
 // GlobalMiddleware apply one or more global middleware. Global middleware are
@@ -208,23 +138,14 @@ func (r *Router) LookupMeta(key string) (any, bool) {
 // Global Middleware are always executed first.
 // Use global middleware for logging and rate limiting for example.
 func (r *Router) GlobalMiddleware(middleware ...Middleware) *Router {
-	for _, m := range middleware {
-		m.Init(r.server)
-	}
-	r.globalMiddleware.middleware = append(r.globalMiddleware.middleware, middleware...)
-	return r
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Middleware apply one or more middleware to the route group.
 func (r *Router) Middleware(middleware ...Middleware) *Router {
-	if r.middleware == nil {
-		r.middleware = make([]Middleware, 0, 3)
-	}
-	for _, m := range middleware {
-		m.Init(r.server)
-	}
-	r.middleware = append(r.middleware, middleware...)
-	return r
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // CORS set the CORS options for this route group.
@@ -232,16 +153,7 @@ func (r *Router) Middleware(middleware ...Middleware) *Router {
 // To disable CORS for this router, subrouters and routes, give `nil` options.
 // CORS can be re-enabled for subrouters and routes on a case-by-case basis
 // using non-nil options.
-func (r *Router) CORS(options *cors.Options) *Router {
-	r.Meta[MetaCORS] = options
-	if options == nil {
-		return r
-	}
-	if !hasMiddleware[*corsMiddleware](r.globalMiddleware.middleware) {
-		r.GlobalMiddleware(&corsMiddleware{})
-	}
-	return r
-}
+func (r *Router) CORS(options *cors.Options) *Router { _ = "STUB: not implemented"; return nil }
 
 // StatusHandler set a handler for responses with an empty body.
 // The handler will be automatically executed if the request's life-cycle reaches its end
@@ -256,100 +168,39 @@ func (r *Router) CORS(options *cors.Options) *Router {
 //
 // Codes in the 400 and 500 ranges have a default status handler.
 func (r *Router) StatusHandler(handler StatusHandler, status int, additionalStatuses ...int) {
-	handler.Init(r.server)
-	r.statusHandlers[status] = handler
-	for _, s := range additionalStatuses {
-		r.statusHandlers[s] = handler
-	}
+	_ = "STUB: not implemented"
+	return
 }
 
 // ServeHTTP dispatches the handler registered in the matched route.
 func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	if req.URL.Scheme != "" && req.URL.Scheme != "http" {
-		address := r.server.getProxyAddress(r.server.config) + req.URL.Path
-		query := req.URL.Query()
-		if len(query) != 0 {
-			address += "?" + query.Encode()
-		}
-		http.Redirect(w, req, address, http.StatusPermanentRedirect)
-		return
-	}
-
-	match := routeMatch{currentPath: req.URL.Path}
-	r.match(req.Method, &match)
-	r.requestHandler(&match, w, req)
+	_ = "STUB: not implemented"
+	return
 }
 
 // TODO export RouteMatch and add Match with string param function
 
 func (r *Router) match(method string, match *routeMatch) bool {
+	_ = "STUB: not implemented"
 	// Check if router itself matches
-	var params []string
-	if r.regex != nil {
-		i := -1
-		if len(match.currentPath) > 0 {
-			// Ignore slashes in router prefix
-			i = nthIndex(match.currentPath[1:], "/", r.slashCount) + 1
-		}
-		if i <= 0 {
-			i = len(match.currentPath)
-		}
-		currentPath := match.currentPath[:i]
-		params = r.regex.FindStringSubmatch(currentPath)
-	} else {
-		params = []string{""}
-	}
-
-	if params != nil {
-		match.trimCurrentPath(params[0])
-		if len(params) > 1 {
-			match.mergeParams(r.makeParameters(params))
-		}
-
-		// Check in subrouters first
-		for _, router := range r.subrouters {
-			if router.match(method, match) {
-				if router.prefix == "" && match.route == methodNotAllowedRoute {
-					// This allows route groups with subrouters having empty prefix.
-					continue
-				}
-				return true
-			}
-		}
-
-		// Check if any route matches
-		for _, route := range r.routes {
-			if route.match(method, match) {
-				return true
-			}
-		}
-	}
-
-	if errors.Is(match.err, errMatchMethodNotAllowed) {
-		match.route = methodNotAllowedRoute
-		return true
-	}
-
-	match.route = notFoundRoute
-	// Return true if the subrouter matched so we don't turn back and check other subrouters
-	return params != nil && len(params[0]) > 0
+	return false
 }
 
-func nthIndex(str, substr string, n int) int {
-	index := -1
-	for range n {
-		i := strings.Index(str, substr)
-		if i == -1 || i == len(str) {
-			return -1
-		}
-		index += i + 1
-		str = str[i+1:]
-	}
-	return index
-}
+// Ignore slashes in router prefix
+
+// Check in subrouters first
+
+// This allows route groups with subrouters having empty prefix.
+
+// Check if any route matches
+
+// Return true if the subrouter matched so we don't turn back and check other subrouters
+
+func nthIndex(str, substr string, n int) int { _ = "STUB: not implemented"; return 0 }
 
 func (r *Router) makeParameters(match []string) map[string]string {
-	return r.parameterizable.makeParameters(match, r.parameters)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Subrouter create a new sub-router from this router.
@@ -358,37 +209,12 @@ func (r *Router) makeParameters(match []string) map[string]string {
 //
 // Subrouters are matched before routes. For example, if you have a subrouter with a
 // prefix "/{name}" and a route "/route", the "/route" will never match.
-func (r *Router) Subrouter(prefix string) *Router {
-	if prefix == "/" {
-		prefix = ""
-	}
+func (r *Router) Subrouter(prefix string) *Router { _ = "STUB: not implemented"; return nil }
 
-	router := &Router{
-		server:         r.server,
-		parent:         r,
-		prefix:         prefix,
-		statusHandlers: maps.Clone(r.statusHandlers),
-		Meta:           make(map[string]any),
-		namedRoutes:    r.namedRoutes,
-		routes:         make([]*Route, 0, 5), // Typical CRUD has 5 routes
-		middlewareHolder: middlewareHolder{
-			middleware: nil,
-		},
-		globalMiddleware: r.globalMiddleware,
-		regexCache:       r.regexCache,
-	}
-	if prefix != "" {
-		router.compileParameters(router.prefix, false, r.regexCache)
-		router.slashCount = strings.Count(prefix, "/")
-	}
-	r.subrouters = append(r.subrouters, router)
-	return router
-}
+// Typical CRUD has 5 routes
 
 // Group create a new sub-router with an empty prefix.
-func (r *Router) Group() *Router {
-	return r.Subrouter("")
-}
+func (r *Router) Group() *Router { _ = "STUB: not implemented"; return nil }
 
 // Route register a new route.
 //
@@ -402,38 +228,27 @@ func (r *Router) Group() *Router {
 //
 // Returns the generated route.
 func (r *Router) Route(methods []string, uri string, handler Handler) *Route {
-	return r.registerRoute(methods, uri, handler)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Get registers a new route with the GET and HEAD methods.
-func (r *Router) Get(uri string, handler Handler) *Route {
-	return r.registerRoute([]string{http.MethodGet}, uri, handler)
-}
+func (r *Router) Get(uri string, handler Handler) *Route { _ = "STUB: not implemented"; return nil }
 
 // Post registers a new route with the POST method.
-func (r *Router) Post(uri string, handler Handler) *Route {
-	return r.registerRoute([]string{http.MethodPost}, uri, handler)
-}
+func (r *Router) Post(uri string, handler Handler) *Route { _ = "STUB: not implemented"; return nil }
 
 // Put registers a new route with the PUT method.
-func (r *Router) Put(uri string, handler Handler) *Route {
-	return r.registerRoute([]string{http.MethodPut}, uri, handler)
-}
+func (r *Router) Put(uri string, handler Handler) *Route { _ = "STUB: not implemented"; return nil }
 
 // Patch registers a new route with the PATCH method.
-func (r *Router) Patch(uri string, handler Handler) *Route {
-	return r.registerRoute([]string{http.MethodPatch}, uri, handler)
-}
+func (r *Router) Patch(uri string, handler Handler) *Route { _ = "STUB: not implemented"; return nil }
 
 // Delete registers a new route with the DELETE method.
-func (r *Router) Delete(uri string, handler Handler) *Route {
-	return r.registerRoute([]string{http.MethodDelete}, uri, handler)
-}
+func (r *Router) Delete(uri string, handler Handler) *Route { _ = "STUB: not implemented"; return nil }
 
 // Options registers a new route wit the OPTIONS method.
-func (r *Router) Options(uri string, handler Handler) *Route {
-	return r.registerRoute([]string{http.MethodOptions}, uri, handler)
-}
+func (r *Router) Options(uri string, handler Handler) *Route { _ = "STUB: not implemented"; return nil }
 
 // Static serve a directory and its subdirectories of static resources.
 // Set the "download" parameter to true if you want the files to be sent as an attachment
@@ -446,116 +261,43 @@ func (r *Router) Options(uri string, handler Handler) *Route {
 // `http.StatusNotFound`. This ensures clients cannot access files outside of the given filesystem base directory.
 // Paths containing  "\" or "//" are also rejected.
 func (r *Router) Static(fs fs.StatFS, uri string, download bool) *Route {
-	return r.registerRoute([]string{http.MethodGet}, uri+"{resource:.*}", staticHandler(fs, download))
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (r *Router) registerRoute(methods []string, uri string, handler Handler) *Route {
-	methodsSlice := slices.Clone(methods)
-
-	corsOptions, hasCORSOptions := r.LookupMeta(MetaCORS)
-	if hasCORSOptions && corsOptions != (*cors.Options)(nil) && !lo.Contains(methodsSlice, http.MethodOptions) {
-		methodsSlice = append(methodsSlice, http.MethodOptions)
-	}
-
-	if lo.Contains(methodsSlice, http.MethodGet) && !lo.Contains(methodsSlice, http.MethodHead) {
-		methodsSlice = append(methodsSlice, http.MethodHead)
-	}
-
-	if uri == "/" && r.parent != nil && !(r.prefix == "" && r.parent.parent == nil) {
-		uri = ""
-	}
-
-	route := &Route{
-		name:    "",
-		uri:     uri,
-		methods: methodsSlice,
-		parent:  r,
-		handler: handler,
-		Meta:    make(map[string]any),
-	}
-	route.compileParameters(route.uri, true, r.regexCache)
-	r.routes = append(r.routes, route)
-	return route
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Controller register all routes for a controller implementing the `Registrer` interface.
 // Automatically calls `Init()` and `RegisterRoutes()` on the given controller.
-func (r *Router) Controller(controller Registrer) *Router {
-	controller.Init(r.server)
-	controller.RegisterRoutes(r)
-	return r
-}
+func (r *Router) Controller(controller Registrer) *Router { _ = "STUB: not implemented"; return nil }
 
 func (r *Router) requestHandler(match *routeMatch, w http.ResponseWriter, rawRequest *http.Request) {
-	request := NewRequest(rawRequest)
-	request.Route = match.route
-	if match.parameters == nil {
-		request.RouteParams = map[string]string{}
-	} else {
-		request.RouteParams = match.parameters
-	}
-	response := NewResponse(r.server, request, w)
-	handler := match.route.handler
-
-	// Route-specific middleware is executed after router middleware
-	handler = match.route.applyMiddleware(handler)
-
-	parent := match.route.parent
-	for parent != nil {
-		handler = parent.applyMiddleware(handler)
-		parent = parent.parent
-	}
-
-	handler = r.globalMiddleware.applyMiddleware(handler)
-
-	handler(response, request)
-
-	if err := r.finalize(match, response, request); err != nil {
-		r.server.Logger.Error(err)
-	}
-
-	if !response.hijacked {
-		requestPool.Put(request)
-		responsePool.Put(response)
-	}
+	_ = "STUB: not implemented"
+	return
 }
+
+// Route-specific middleware is executed after router middleware
 
 // finalize the request's life-cycle.
 func (r *Router) finalize(match *routeMatch, response *Response, request *Request) error {
-	if response.empty {
-		if response.status == 0 {
-			// If the response is empty, return status 204 to
-			// comply with RFC 7231, 6.3.5
-			response.Status(http.StatusNoContent)
-		} else if response.err != nil && response.wroteHeader {
-			// An error occurred after the response header has been written. We still want to execute the panic status handler.
-			if statusHandler, ok := r.getStatusHandler(match, http.StatusInternalServerError); ok {
-				statusHandler.Handle(response, request)
-			}
-		} else if statusHandler, ok := r.getStatusHandler(match, response.status); ok {
-			// Status has been set but body is empty.
-			// Execute status handler if exists.
-			statusHandler.Handle(response, request)
-		}
-	} else if response.err != nil {
-		// An error has occurred after a write. We still want to execute the panic status handler.
-		if statusHandler, ok := r.getStatusHandler(match, http.StatusInternalServerError); ok {
-			statusHandler.Handle(response, request)
-		}
-	}
-
-	if !response.wroteHeader && !response.hijacked {
-		response.WriteHeader(response.status)
-	}
-
-	return errorutil.New(response.close())
+	_ = "STUB: not implemented"
+	return nil
 }
 
+// If the response is empty, return status 204 to
+// comply with RFC 7231, 6.3.5
+
+// An error occurred after the response header has been written. We still want to execute the panic status handler.
+
+// Status has been set but body is empty.
+// Execute status handler if exists.
+
+// An error has occurred after a write. We still want to execute the panic status handler.
+
 func (r *Router) getStatusHandler(match *routeMatch, status int) (StatusHandler, bool) {
-	if match.route.parent == nil {
-		h, ok := r.statusHandlers[status]
-		return h, ok
-	}
-	h, ok := match.route.parent.statusHandlers[status]
-	return h, ok
+	_ = "STUB: not implemented"
+	return *new(StatusHandler), false
 }

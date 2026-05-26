@@ -2,8 +2,6 @@ package auth
 
 import (
 	"context"
-	"fmt"
-	"net/http"
 
 	"goyave.dev/goyave/v5"
 )
@@ -89,37 +87,11 @@ type Handler[T any] struct {
 // If the matched route doesn't contain the `MetaAuth` or if it's not equal to `true`,
 // the middleware is skipped.
 func (m *Handler[T]) Handle(next goyave.Handler) goyave.Handler {
-	return func(response *goyave.Response, request *goyave.Request) {
-		if requireAuth, ok := request.Route.LookupMeta(MetaAuth); !ok || requireAuth != true {
-			next(response, request)
-			return
-		}
-
-		user, err := m.Authenticate(request)
-		if err != nil {
-			if authenticateHeader := m.getAuthenticateHeader(); authenticateHeader != "" {
-				response.Header().Set("WWW-Authenticate", authenticateHeader)
-			}
-			if unauthorizer, ok := m.Authenticator.(Unauthorizer); ok {
-				unauthorizer.OnUnauthorized(response, request, err)
-				return
-			}
-			response.JSON(http.StatusUnauthorized, map[string]string{"error": err.Error()})
-			return
-		}
-		request.User = user
-		request.WithContext(ContextWithUser(request.Context(), user))
-		next(response, request)
-	}
+	_ = "STUB: not implemented"
+	return *new(goyave.Handler)
 }
 
-func (m *Handler[T]) getAuthenticateHeader() string {
-	sa, ok := m.Authenticator.(SchemeAuthenticator)
-	if !ok {
-		return ""
-	}
-	return fmt.Sprintf(`%s realm="%s", charset="UTF-8"`, sa.Scheme(), m.Realm)
-}
+func (m *Handler[T]) getAuthenticateHeader() string { _ = "STUB: not implemented"; return "" }
 
 // Middleware returns an authentication middleware which will use the given
 // authenticator and set the request's `User` according to the generic type `T`, which
@@ -130,7 +102,8 @@ func (m *Handler[T]) getAuthenticateHeader() string {
 // If the matched route or any of its parent doesn't have this meta or if it's not equal to
 // `true`, the authentication is skipped.
 func Middleware[T any](authenticator Authenticator[T]) *Handler[T] {
-	return MiddlewareWithRealm(authenticator, defaultRealm)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // MiddlewareWithRealm is the same as `Middleware` but with a custom realm description.
@@ -139,10 +112,8 @@ func Middleware[T any](authenticator Authenticator[T]) *Handler[T] {
 // Note that the `WWW-Authenticate` header is NOT added to the response if the authenticator
 // doesn't implement `SchemeAuthenticator`.
 func MiddlewareWithRealm[T any](authenticator Authenticator[T], realm string) *Handler[T] {
-	return &Handler[T]{
-		Authenticator: authenticator,
-		Realm:         realm,
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // userCtxKey the key used to store the authenticated user in the context.
@@ -151,7 +122,8 @@ type userCtxKey struct{}
 // ContextWithUser inject the given user as a context value. The user
 // can be retrieved from the returned context using `UserFromContext`.
 func ContextWithUser(ctx context.Context, user any) context.Context {
-	return context.WithValue(ctx, userCtxKey{}, user)
+	_ = "STUB: not implemented"
+	return *new(context.Context)
 }
 
 // UserFromContext return the authenticated user stored in the given context or nil.
@@ -159,9 +131,4 @@ func ContextWithUser(ctx context.Context, user any) context.Context {
 // stored in the context isn't of type `*T`, nil is returned.
 //
 //	user := UserFromContext[dto.InternalUser](ctx)
-func UserFromContext[T any](ctx context.Context) *T {
-	if u, ok := ctx.Value(userCtxKey{}).(*T); ok {
-		return u
-	}
-	return nil
-}
+func UserFromContext[T any](ctx context.Context) *T { _ = "STUB: not implemented"; return nil }

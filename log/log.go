@@ -4,9 +4,7 @@ import (
 	"io"
 	"log/slog"
 
-	"github.com/samber/lo"
 	"goyave.dev/goyave/v5"
-	"goyave.dev/goyave/v5/util/errors"
 )
 
 // Context contains all information needed for a `Formatter`.
@@ -45,44 +43,19 @@ var _ goyave.PreWriter = (*Writer)(nil)
 // The given Request and Response will be used and passed to the given
 // formatter.
 func NewWriter(server *goyave.Server, response *goyave.Response, request *goyave.Request, formatter Formatter) *Writer {
-	writer := &Writer{
-		CommonWriter: goyave.NewCommonWriter(response.Writer()),
-		request:      request,
-		response:     response,
-		formatter:    formatter,
-	}
-	writer.Init(server)
-	return writer
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Write writes the data as a response and keeps its length in memory
 // for later logging.
-func (w *Writer) Write(b []byte) (int, error) {
-	w.length += len(b)
-	n, err := w.CommonWriter.Write(b)
-	return n, errors.New(err)
-}
+func (w *Writer) Write(b []byte) (int, error) { _ = "STUB: not implemented"; return 0, nil }
 
 // Close the writer and its child ResponseWriter, flushing response
 // output to the logs.
-func (w *Writer) Close() error {
-	ctx := &Context{
-		Component: w.Component,
-		Request:   w.request,
-		Status:    w.response.GetStatus(),
-		Length:    w.length,
-	}
-	message, attrs := w.formatter(ctx)
+func (w *Writer) Close() error { _ = "STUB: not implemented"; return nil }
 
-	if w.Config().GetBool("app.debug") {
-		// In dev mode, we omit the details to avoid clutter. The message itself is enough.
-		w.Logger().Info(message)
-	} else {
-		w.Logger().Info(message, lo.Map(attrs, func(a slog.Attr, _ int) any { return a })...)
-	}
-
-	return errors.New(w.CommonWriter.Close())
-}
+// In dev mode, we omit the details to avoid clutter. The message itself is enough.
 
 // AccessMiddleware captures response data and outputs it to the logger at the
 // INFO level. The message and attributes logged are defined by the `Formatter`.
@@ -93,22 +66,20 @@ type AccessMiddleware struct {
 
 // Handle adds the access logging chained writer to the response.
 func (m *AccessMiddleware) Handle(next goyave.Handler) goyave.Handler {
-	return func(response *goyave.Response, request *goyave.Request) {
-		logWriter := NewWriter(m.Server(), response, request, m.Formatter)
-		response.SetWriter(logWriter)
-
-		next(response, request)
-	}
+	_ = "STUB: not implemented"
+	return *new(goyave.Handler)
 }
 
 // CommonLogMiddleware captures response data and outputs it to the default logger
 // using the common log format.
 func CommonLogMiddleware() goyave.Middleware {
-	return &AccessMiddleware{Formatter: CommonLogFormatter}
+	_ = "STUB: not implemented"
+	return *new(goyave.Middleware)
 }
 
 // CombinedLogMiddleware captures response data and outputs it to the default logger
 // using the combined log format.
 func CombinedLogMiddleware() goyave.Middleware {
-	return &AccessMiddleware{Formatter: CombinedLogFormatter}
+	_ = "STUB: not implemented"
+	return *new(goyave.Middleware)
 }

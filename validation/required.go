@@ -10,26 +10,23 @@ package validation
 type RequiredValidator struct{ BaseValidator }
 
 // Validate checks the field under validation satisfies this validator's criteria.
-func (v *RequiredValidator) Validate(ctx *Context) bool {
-	if !ctx.Field.IsNullable() && ctx.Value == nil {
-		return false
-	}
-	return true
-}
+func (v *RequiredValidator) Validate(ctx *Context) bool { _ = "STUB: not implemented"; return false }
 
 // Name returns the string name of the validator.
-func (v *RequiredValidator) Name() string { return "required" }
+func (v *RequiredValidator) Name() string {
+	_ = "STUB: not implemented"
 
-// Required the field under validation is required.
-// If a field is absent from the input data, subsequent validators
-// will not be executed.
-//
-// If a field is `nil` and has the `Nullable` validator, this validator passes.
-// As non-nullable fields are removed if they have a `nil` value, this validator
-// doesn't pass if a field is `nil` and doesn't have the `Nullable` validator.
-func Required() *RequiredValidator {
-	return &RequiredValidator{}
+	// Required the field under validation is required.
+	// If a field is absent from the input data, subsequent validators
+	// will not be executed.
+	//
+	// If a field is `nil` and has the `Nullable` validator, this validator passes.
+	// As non-nullable fields are removed if they have a `nil` value, this validator
+	// doesn't pass if a field is `nil` and doesn't have the `Nullable` validator.
+	return ""
 }
+
+func Required() *RequiredValidator { _ = "STUB: not implemented"; return nil }
 
 //------------------------------
 
@@ -41,15 +38,11 @@ type RequiredIfValidator struct {
 }
 
 // Validate checks the field under validation satisfies this validator's criteria.
-func (v *RequiredIfValidator) Validate(ctx *Context) bool {
-	if !v.Condition(ctx) {
-		return true
-	}
-	return v.RequiredValidator.Validate(ctx)
-}
+func (v *RequiredIfValidator) Validate(ctx *Context) bool { _ = "STUB: not implemented"; return false }
 
 // RequiredIf is the same as `Required` but only applies the behavior
 // described if the specified condition function returns true.
 func RequiredIf(condition func(*Context) bool) *RequiredIfValidator {
-	return &RequiredIfValidator{Condition: condition}
+	_ = "STUB: not implemented"
+	return nil
 }

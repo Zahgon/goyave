@@ -4,10 +4,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/samber/lo"
 	"goyave.dev/goyave/v5"
-	"goyave.dev/goyave/v5/util/errors"
-	"goyave.dev/goyave/v5/util/httputil"
 )
 
 // Encoder is an interface that wraps the methods returning the information
@@ -38,47 +35,15 @@ type compressWriter struct {
 	empty          bool
 }
 
-func (w *compressWriter) PreWrite(b []byte) {
-	if pr, ok := w.childWriter.(goyave.PreWriter); ok {
-		pr.PreWrite(b)
-	}
-	w.empty = false
-	h := w.responseWriter.Header()
-	if h.Get("Content-Type") == "" {
-		h.Set("Content-Type", http.DetectContentType(b))
-	}
-	h.Set("Content-Encoding", w.encoding)
-	h.Add("Vary", "Accept-Encoding")
-	h.Del("Content-Length")
-}
+func (w *compressWriter) PreWrite(b []byte) { _ = "STUB: not implemented"; return }
 
-func (w *compressWriter) Flush() error {
-	if err := w.CommonWriter.Flush(); err != nil {
-		return errors.New(err)
-	}
-	switch flusher := w.childWriter.(type) {
-	case goyave.Flusher:
-		return errors.New(flusher.Flush())
-	case http.Flusher:
-		flusher.Flush()
-	}
-	return nil
-}
+func (w *compressWriter) Flush() error { _ = "STUB: not implemented"; return nil }
 
 func (w *compressWriter) Close() error {
-	if w.empty {
-		// Do not write gzip/br/... footer if nothing has been written to the response body.
-		if r, ok := w.Writer().(resettable); ok {
-			r.Reset(io.Discard)
-		}
-	}
-	err := errors.New(w.CommonWriter.Close())
+	_ = "STUB: not implemented"
 
-	if wr, ok := w.childWriter.(io.Closer); ok {
-		return errors.New(wr.Close())
-	}
-
-	return err
+	// Do not write gzip/br/... footer if nothing has been written to the response body.
+	return nil
 }
 
 // Middleware compresses HTTP responses.
@@ -118,53 +83,11 @@ type Middleware struct {
 
 // Handle implementation of `goyave.Middleware`.
 func (m *Middleware) Handle(next goyave.Handler) goyave.Handler {
-	return func(response *goyave.Response, request *goyave.Request) {
-		encoder := m.getEncoder(response, request)
-		if encoder == nil {
-			next(response, request)
-			return
-		}
-
-		request.Header().Del("Accept-Encoding")
-
-		respWriter := response.Writer()
-		compressWriter := &compressWriter{
-			CommonWriter:   goyave.NewCommonWriter(encoder.NewWriter(respWriter)),
-			responseWriter: response,
-			childWriter:    respWriter,
-			encoding:       encoder.Encoding(),
-			empty:          true,
-		}
-		response.SetWriter(compressWriter)
-
-		next(response, request)
-	}
+	_ = "STUB: not implemented"
+	return *new(goyave.Handler)
 }
 
 func (m *Middleware) getEncoder(response *goyave.Response, request *goyave.Request) Encoder {
-	if response.Hijacked() || request.Header().Get("Upgrade") != "" {
-		return nil
-	}
-	acceptedEncodings := httputil.ParseMultiValuesHeader(request.Header().Get("Accept-Encoding"))
-	if len(acceptedEncodings) == 0 {
-		return nil
-	}
-	groupedByPriority := lo.PartitionBy(acceptedEncodings, func(h httputil.HeaderValue) float64 {
-		return h.Priority
-	})
-	for _, h := range groupedByPriority {
-		w, ok := lo.Find(m.Encoders, func(w Encoder) bool {
-			return lo.ContainsBy(h, func(h httputil.HeaderValue) bool { return h.Value == w.Encoding() })
-		})
-		if ok {
-			return w
-		}
-
-		hasWildCard := lo.ContainsBy(h, func(h httputil.HeaderValue) bool { return h.Value == "*" })
-		if hasWildCard {
-			return m.Encoders[0]
-		}
-	}
-
-	return nil
+	_ = "STUB: not implemented"
+	return *new(Encoder)
 }
